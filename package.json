@@ -1,0 +1,14 @@
+{
+  "name": "github-stats",
+  "version": "1.0.0",
+  "repository": "ssh://git@bit.adguard.com:7999/adguard-filters/github-stats.git",
+  "author": "Stanislav A <s.atroschenko@adguard.com>",
+  "license": "MIT",
+  "scripts": {
+    "go": "node ./github-stats --repo=AdguardTeam/AdguardFilters --since=2022-04-21T00:00:00Z"
+  },
+  "dependencies": {
+    "@octokit/core": "^3.6.0",
+    "yargs": "^17.4.1"
+  }
+}
