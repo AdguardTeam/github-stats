@@ -6,6 +6,7 @@ const yargs = require('yargs');
 const { unionBy } = require('lodash/array');
 const { Octokit } = require('@octokit/core');
 
+const EVENT_EXPIRATION = 30;
 const STORAGE_PATH = './storage/event-storage.txt';
 const ENDPOINTS = {
     GITHUB_EVENTS: 'GET /repos/{owner}/{repo}/events',
@@ -73,10 +74,26 @@ const writeEventsToStorage = (events) => {
     fs.writeFileSync(STORAGE_PATH, JSON.stringify(events));
 };
 
+/**
+ * Removes events that are older than specified date
+ * @param {Array.<Object>} events array with GitHub event objects
+ * @param {number} expiration number of days representing events lifespan
+ * @return {Array.<Object>} array with GitHub event objects
+ */
+const removeOldEvents = (events, expiration) => {
+    return events.filter((event) => {
+        const createdTime = new Date(event.created_at).getTime();
+        const daysAlive = (Date.now() - createdTime) / (1000 * 3600 * 24);
+        return daysAlive <= expiration;
+    });
+};
+
 (async () => {
     const events = await pollGithubEvents();
-    const storage = getEventsFromStorage();
-
+    let storage = getEventsFromStorage();
+    console.log(storage.length);
+    storage = removeOldEvents(storage, EVENT_EXPIRATION);
+    console.log(storage.length);
     // Merge polled events with storage and de-duplicate by id
     const mergedEvents = unionBy(storage, events, 'id');
 
