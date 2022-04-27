@@ -16,6 +16,7 @@ const {
 
 (async () => {
     const newEvents = await getGithubData(ENDPOINTS.GITHUB_EVENTS);
+
     let collection = getEventsFromCollection(STORAGE_PATH);
 
     collection = removeOldEvents(collection, EVENT_EXPIRATION_DAYS);

@@ -49,7 +49,10 @@ const getGithubData = async (endpoint, requestData = {}) => {
  * @return {Array.<Object>} array with GitHub event objects
  */
 const getEventsFromCollection = (storagePath) => {
-    const storage = fs.readFileSync(`${storagePath}`, 'utf8');
+    const storage = fs.readFileSync(`${storagePath}`, {
+        encoding: 'utf8',
+        flag: 'as+',
+    });
     if (storage.length === 0) {
         return [];
     }
