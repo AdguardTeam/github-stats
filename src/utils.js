@@ -84,14 +84,14 @@ const removeOldEvents = (events, expirationDays) => {
  * @param {Object} e github event object
  * @return {boolean}
  */
-const isOpened = (e) => e.payload.action === 'opened';
+const isOpenedAction = (e) => e.payload.action === 'opened';
 
 /**
  * Determines if Github event is 'closed'
  * @param {Object} e github event object
  * @return {boolean}
  */
-const isClosed = (e) => e.payload.action === 'closed';
+const isClosedAction = (e) => e.payload.action === 'closed';
 
 /**
  * Determines if Github issue has Stale label
@@ -99,7 +99,7 @@ const isClosed = (e) => e.payload.action === 'closed';
  * @return {boolean}
  */
 const isStale = (issue) => {
-    const { labels } = issue.payload.issue;
+    const { labels } = issue;
     if (!labels || labels.length === 0) {
         return false;
     }
@@ -138,8 +138,8 @@ module.exports = {
     getEventsFromCollection,
     writeEventsToCollection,
     removeOldEvents,
-    isOpened,
-    isClosed,
+    isOpenedAction,
+    isClosedAction,
     isStale,
     isMerged,
     isNewlyCreated,
