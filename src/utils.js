@@ -1,14 +1,28 @@
 const fs = require('fs');
+const yargs = require('yargs');
 const { Octokit } = require('@octokit/core');
 
 const { OCTO_ACCESS_TOKEN } = process.env; // Github personal access token
 const octokit = new Octokit({ auth: OCTO_ACCESS_TOKEN });
 
+const options = yargs
+    .options({
+        repo: {
+            demandOption: true,
+            type: 'string',
+        },
+    })
+    .argv;
+const defaultRequestData = {
+    owner: options.repo.split('/')[0],
+    repo: options.repo.split('/')[1],
+};
+
 /**
- * Get GitHub events with pagination
+ * Get GitHub data from specified endpoint with pagination
  * @return {Array.<Object>} array with GitHub event objects
  */
-const pollGithubEvents = async (endpoint, requestData) => {
+const getGithubData = async (endpoint, requestData = {}) => {
     const collectedPages = [];
 
     let currentLink = 'rel="next"';
@@ -16,6 +30,7 @@ const pollGithubEvents = async (endpoint, requestData) => {
     while (currentLink && currentLink.includes('rel="next"')) {
         // eslint-disable-next-line no-await-in-loop
         const { headers, data } = await octokit.request(endpoint, {
+            ...defaultRequestData,
             ...requestData,
             page: pageNumber,
         });
@@ -64,9 +79,50 @@ const removeOldEvents = (events, expirationDays) => {
     });
 };
 
+/**
+ * Determines if Github event is 'opened'
+ * @param {Object} e github event object
+ * @return {boolean}
+ */
+const isOpened = (e) => e.payload.action === 'opened';
+
+/**
+ * Determines if Github event is 'closed'
+ * @param {Object} e github event object
+ * @return {boolean}
+ */
+const isClosed = (e) => e.payload.action === 'closed';
+
+/**
+ * Determines if Github issue has Stale label
+ * @param {Object} issue github issue object
+ * @return {boolean}
+ */
+const isStale = (issue) => {
+    const { labels } = issue.payload.issue;
+    if (!labels || labels.length === 0) {
+        return false;
+    }
+    return labels.some((label) => label.name === 'Stale');
+};
+
+/**
+ * Determines if pull request is merged
+ * @param {Object} pull github pull object
+ * @return {boolean}
+ */
+const isMerged = (pull) => {
+    const mergeTime = pull.payload.pull_request.merged_at;
+    return typeof mergeTime === 'string';
+};
+
 module.exports = {
-    pollGithubEvents,
+    getGithubData,
     getEventsFromCollection,
     writeEventsToCollection,
     removeOldEvents,
+    isOpened,
+    isClosed,
+    isStale,
+    isMerged,
 };

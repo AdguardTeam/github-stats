@@ -1,35 +1,21 @@
 #!/usr/bin/env node
 
 require('dotenv').config();
-const yargs = require('yargs');
 const { unionBy } = require('lodash/array');
 const {
-    pollGithubEvents,
+    getGithubData,
     getEventsFromCollection,
     writeEventsToCollection,
     removeOldEvents,
-} = require('../src/poll-utils');
+} = require('../src/utils');
 const {
     EVENT_EXPIRATION_DAYS,
     STORAGE_PATH,
     ENDPOINTS,
 } = require('../src/constants');
 
-const options = yargs
-    .options({
-        repo: {
-            demandOption: true,
-            type: 'string',
-        },
-    })
-    .argv;
-const defaultRequestData = {
-    owner: options.repo.split('/')[0],
-    repo: options.repo.split('/')[1],
-};
-
 (async () => {
-    const newEvents = await pollGithubEvents(ENDPOINTS.GITHUB_EVENTS, defaultRequestData);
+    const newEvents = await getGithubData(ENDPOINTS.GITHUB_EVENTS);
     let collection = getEventsFromCollection(STORAGE_PATH);
 
     collection = removeOldEvents(collection, EVENT_EXPIRATION_DAYS);
