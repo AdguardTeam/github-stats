@@ -1,5 +1,5 @@
 const EVENT_EXPIRATION_DAYS = 30;
-const STORAGE_PATH = './storage/event-storage.txt';
+const STORAGE_PATH = './events-collection.txt';
 const ENDPOINTS = {
     GITHUB_EVENTS: 'GET /repos/{owner}/{repo}/events',
 };

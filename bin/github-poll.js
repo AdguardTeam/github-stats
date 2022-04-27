@@ -1,15 +1,14 @@
 #!/usr/bin/env node
 
 require('dotenv').config();
-
 const yargs = require('yargs');
 const { unionBy } = require('lodash/array');
 const {
     pollGithubEvents,
-    getEventsFromStorage,
-    writeEventsToStorage,
+    getEventsFromCollection,
+    writeEventsToCollection,
     removeOldEvents,
-} = require('../src/events-utils');
+} = require('../src/poll-utils');
 const {
     EVENT_EXPIRATION_DAYS,
     STORAGE_PATH,
@@ -30,13 +29,13 @@ const defaultRequestData = {
 };
 
 (async () => {
-    const events = await pollGithubEvents(ENDPOINTS.GITHUB_EVENTS, defaultRequestData);
-    let storage = getEventsFromStorage(STORAGE_PATH);
-    console.log(storage.length);
-    storage = removeOldEvents(storage, EVENT_EXPIRATION_DAYS);
-    console.log(storage.length);
-    // Merge polled events with storage and de-duplicate by id
-    const mergedEvents = unionBy(storage, events, 'id');
+    const newEvents = await pollGithubEvents(ENDPOINTS.GITHUB_EVENTS, defaultRequestData);
+    let collection = getEventsFromCollection(STORAGE_PATH);
 
-    writeEventsToStorage(STORAGE_PATH, mergedEvents);
+    collection = removeOldEvents(collection, EVENT_EXPIRATION_DAYS);
+
+    // Merge polled events with storage and de-duplicate by id
+    const mergedEvents = unionBy(collection, newEvents, 'id');
+
+    writeEventsToCollection(STORAGE_PATH, mergedEvents);
 })();
