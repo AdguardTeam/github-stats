@@ -2,7 +2,7 @@
 
 require('dotenv').config();
 const yargs = require('yargs');
-const prepareStats = require('../src/prepare-stats/index');
+const prepareStats = require('../src/prepare-stats/prepare-stats');
 
 const options = yargs
     .options({
