@@ -33,7 +33,7 @@ const pollGithubEvents = async (endpoint, requestData) => {
  * Gets array of GitHub event objects from storage
  * @return {Array.<Object>} array with GitHub event objects
  */
-const getEventsFromStorage = (storagePath) => {
+const getEventsFromCollection = (storagePath) => {
     const storage = fs.readFileSync(`${storagePath}`, 'utf8');
     if (storage.length === 0) {
         return [];
@@ -46,7 +46,7 @@ const getEventsFromStorage = (storagePath) => {
  * Writes event objects from array to storage
  * @param {Array.<Object>} events array with GitHub event objects
  */
-const writeEventsToStorage = (storagePath, events) => {
+const writeEventsToCollection = (storagePath, events) => {
     fs.writeFileSync(storagePath, JSON.stringify(events));
 };
 
@@ -66,7 +66,7 @@ const removeOldEvents = (events, expirationDays) => {
 
 module.exports = {
     pollGithubEvents,
-    getEventsFromStorage,
-    writeEventsToStorage,
+    getEventsFromCollection,
+    writeEventsToCollection,
     removeOldEvents,
 };
