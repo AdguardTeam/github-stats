@@ -116,6 +116,23 @@ const isMerged = (pull) => {
     return typeof mergeTime === 'string';
 };
 
+/**
+ * Checks if GitHub object was created since time specified
+ *
+ * @param {object} ghObject GitHub API response object
+ * @param {string} searchTime timestamp in ISO 8601 format: YYYY-MM-DDTHH:MM:SSZ
+ * @return {boolean}
+ */
+const isNewlyCreated = (ghObject, searchTime) => {
+    if (typeof searchTime === 'undefined') {
+        return true;
+    }
+    const searchTimeNum = Number(new Date(searchTime));
+    const createTimeNum = Number(new Date(ghObject.created_at));
+
+    return searchTimeNum < createTimeNum;
+};
+
 module.exports = {
     getGithubData,
     getEventsFromCollection,
@@ -125,4 +142,5 @@ module.exports = {
     isClosed,
     isStale,
     isMerged,
+    isNewlyCreated,
 };

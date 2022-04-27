@@ -1,3 +1,4 @@
+const yargs = require('yargs');
 const {
     getEventsFromCollection,
     getGithubData,
@@ -5,20 +6,32 @@ const {
     isClosed,
     isStale,
     isMerged,
+    isNewlyCreated,
 } = require('../src/utils');
 const {
     STORAGE_PATH,
     ENDPOINTS,
 } = require('../src/constants');
 
-const collection = getEventsFromCollection(STORAGE_PATH);
+const options = yargs
+    .options({
+        since: {
+            demandOption: false,
+            type: 'string',
+        },
+    })
+    .argv;
+const searchTime = options.since;
 
-const issuesEvents = collection.filter((e) => e.type === 'IssuesEvent');
+const collection = getEventsFromCollection(STORAGE_PATH);
+const eventsBySearchDate = collection.filter((event) => isNewlyCreated(event, searchTime));
+
+const issuesEvents = eventsBySearchDate.filter((e) => e.type === 'IssuesEvent');
 const newIssues = issuesEvents.filter((e) => isOpened(e));
 const resolvedIssues = issuesEvents.filter((e) => isClosed(e) && !isStale(e));
 const closedAsStaleIssues = issuesEvents.filter((e) => isClosed(e) && isStale(e));
 
-const pullsEvents = collection.filter((e) => e.type === 'PullRequestEvent');
+const pullsEvents = eventsBySearchDate.filter((e) => e.type === 'PullRequestEvent');
 const newPulls = pullsEvents.filter((e) => isOpened(e));
 const mergedPulls = pullsEvents.filter((e) => isMerged(e));
 
