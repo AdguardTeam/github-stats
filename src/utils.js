@@ -20,7 +20,7 @@ const defaultRequestData = {
 
 /**
  * Get GitHub data from specified endpoint with pagination
- * @return {Array.<Object>} array with GitHub event objects
+ * @return {Array.<Promise>} array with GitHub event objects
  */
 const getGithubData = async (endpoint, requestData = {}) => {
     const collectedPages = [];
