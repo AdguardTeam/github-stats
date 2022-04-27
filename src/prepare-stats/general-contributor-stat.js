@@ -2,15 +2,15 @@ const {
     isStale,
 } = require('../tools/events-utils');
 
-const prepareGeneralContributorsStats = (events) => {
-    const generalContributorsStats = {};
+const prepareGeneralContributorStats = (events) => {
+    const generalContributorStats = {};
 
     const distributeActivity = (event) => {
         const addActivity = (username) => {
-            if (typeof generalContributorsStats[username] === 'undefined') {
-                generalContributorsStats[username] = 1;
+            if (typeof generalContributorStats[username] === 'undefined') {
+                generalContributorStats[username] = 1;
             } else {
-                generalContributorsStats[username] += 1;
+                generalContributorStats[username] += 1;
             }
         };
 
@@ -48,7 +48,7 @@ const prepareGeneralContributorsStats = (events) => {
 
     events.forEach((event) => distributeActivity(event));
 
-    return generalContributorsStats;
+    return generalContributorStats;
 };
 
-module.exports = prepareGeneralContributorsStats;
+module.exports = prepareGeneralContributorStats;

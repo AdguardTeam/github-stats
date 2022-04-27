@@ -25,5 +25,5 @@ const defaultRequestData = {
 (async () => {
     const statistics = await prepareStats(defaultRequestData, searchTime);
     console.log(statistics.generalRepoStats);
-    console.log(statistics.generalContributorsStats);
+    console.log(statistics.generalContributorStats);
 })();
