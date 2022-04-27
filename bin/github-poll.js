@@ -77,14 +77,14 @@ const writeEventsToStorage = (events) => {
 /**
  * Removes events that are older than specified date
  * @param {Array.<Object>} events array with GitHub event objects
- * @param {number} expiration number of days representing events lifespan
+ * @param {number} expirationDays number of days representing events lifespan
  * @return {Array.<Object>} array with GitHub event objects
  */
-const removeOldEvents = (events, expiration) => {
+const removeOldEvents = (events, expirationDays) => {
     return events.filter((event) => {
         const createdTime = new Date(event.created_at).getTime();
         const daysAlive = (Date.now() - createdTime) / (1000 * 3600 * 24);
-        return daysAlive <= expiration;
+        return daysAlive <= expirationDays;
     });
 };
 
