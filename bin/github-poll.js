@@ -6,7 +6,7 @@ const yargs = require('yargs');
 const { unionBy } = require('lodash/array');
 const { Octokit } = require('@octokit/core');
 
-const EVENT_EXPIRATION = 30;
+const EVENT_EXPIRATION_DAYS = 30;
 const STORAGE_PATH = './storage/event-storage.txt';
 const ENDPOINTS = {
     GITHUB_EVENTS: 'GET /repos/{owner}/{repo}/events',
@@ -92,7 +92,7 @@ const removeOldEvents = (events, expirationDays) => {
     const events = await pollGithubEvents();
     let storage = getEventsFromStorage();
     console.log(storage.length);
-    storage = removeOldEvents(storage, EVENT_EXPIRATION);
+    storage = removeOldEvents(storage, EVENT_EXPIRATION_DAYS);
     console.log(storage.length);
     // Merge polled events with storage and de-duplicate by id
     const mergedEvents = unionBy(storage, events, 'id');
