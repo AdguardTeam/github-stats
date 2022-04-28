@@ -3,6 +3,7 @@
 require('dotenv').config();
 const yargs = require('yargs');
 const prepareStats = require('../src/prepare-stats/prepare-stats');
+const printStats = require('../src/print-stats');
 
 const options = yargs
     .options({
@@ -24,8 +25,5 @@ const defaultRequestData = {
 
 (async () => {
     const statistics = await prepareStats(defaultRequestData, searchTime);
-
-    console.log(statistics.generalRepoStats);
-    console.log(statistics.generalContributorStats);
-    console.log(statistics.detailedContributorStats);
+    printStats(statistics);
 })();
