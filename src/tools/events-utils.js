@@ -82,19 +82,33 @@ const getCommitsCount = (pushEvents) => {
 
 /**
  * Counts events of specified type for contributor
- * @param {Object} contributor contributor object
+ * @param {Object} events contributor event object
  * @param {string} eventType event type as per Github events doc
  * @return {number}
  */
-const countEventsByType = (contributor, eventType) => {
-    if (typeof contributor[eventType] === 'undefined') {
+const countEventsByType = (events, eventType) => {
+    if (eventType === 'newPullEvent' && events.PullRequestEvent) {
+        const newPullsCount = events
+            .PullRequestEvent
+            .filter((event) => !isMerged(event))
+            .length;
+        return newPullsCount;
+    }
+    if (eventType === 'mergePullEvent' && events.PullRequestEvent) {
+        const mergedPullsCount = events
+            .PullRequestEvent
+            .filter((event) => !isMerged(event))
+            .length;
+        return mergedPullsCount;
+    }
+    if (typeof events[eventType] === 'undefined') {
         return 0;
     }
-    if (contributor.eventType === 'PushEvent') {
-        return getCommitsCount(contributor.PushEvent);
+    if (eventType === 'PushEvent') {
+        return getCommitsCount(events.PushEvent);
     }
 
-    return contributor[eventType].length;
+    return events[eventType].length;
 };
 
 module.exports = {

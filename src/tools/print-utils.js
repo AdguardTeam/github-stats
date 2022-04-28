@@ -39,7 +39,7 @@ const printByDetailedActivity = (detailedActivity) => {
     for (const [name, activities] of Object.entries(detailedActivity)) {
         console.log(`### ${name} \n`);
         console.log(`* Resolved issues: ${activities.resolvedIssues}`);
-        console.log(`* New pull requests (merged): ${activities.newMergedPulls} (FIX)`);
+        console.log(`* New pull requests (merged): ${activities.newPulls} (${activities.mergedPulls})`);
         console.log(`* Pull requests review activity: ${activities.pullRequestsReview}`);
         console.log(`* Total commits: ${activities.totalCommits} \n\n`);
     }

@@ -14,7 +14,6 @@ const printStats = (statistics) => {
     printGeneralRepoStats(generalRepoStats);
     printByGeneralActivity(generalContributorStats);
     printByDetailedActivity(detailedContributorStats);
-    //console.log(detailedContributorStats);
 };
 
 module.exports = printStats;

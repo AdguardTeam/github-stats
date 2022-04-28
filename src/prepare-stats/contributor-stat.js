@@ -8,18 +8,20 @@ const prepareContributorStat = (events) => {
 
     class Contributor {
         addActivityEvent(event) {
-            if (typeof this[event.type] === 'undefined') {
-                this[event.type] = [];
+            const { type } = event;
+            if (typeof this[type] === 'undefined') {
+                // Init event type if there is no such type already
+                this[type] = [];
             }
-            this[event.type].push(event);
+            this[type].push(event);
         }
 
         countTotalActivity() {
             let activityCount = 0;
             // eslint-disable-next-line no-restricted-syntax
             for (const eventType of Object.keys(this)) {
-                // Extract commits from PushEvents to count them separately
                 if (eventType === 'PushEvent') {
+                    // Extract commits from PushEvents to count them separately
                     const commitsCount = getCommitsCount(this[eventType]);
                     activityCount += commitsCount;
                 } else {
@@ -51,8 +53,10 @@ const prepareContributorStat = (events) => {
                 break;
             }
             case 'PullRequestEvent': {
-                if (payload.action === 'closed' && typeof payload.pull_request.merged_at === 'string') {
-                    // merged pull request counts for the one who opened it
+                // count only newly opened & merged pulls
+                if (payload.action === 'opened'
+                    || (payload.action === 'closed' && typeof payload.pull_request.merged_at === 'string')) {
+                    // merged pull request count for the one who opened it
                     contributorName = payload.pull_request.user.login;
                 }
                 break;
@@ -84,7 +88,6 @@ const prepareContributorStat = (events) => {
         }
         contributors[contributorName].addActivityEvent(event);
     });
-
     return contributors;
 };
 

@@ -18,16 +18,16 @@ const prepareStats = async (requestData, searchTime) => {
 
     const detailedContributorStats = {};
     // eslint-disable-next-line no-restricted-syntax
-    for (const name of Object.keys(contributors)) {
-        const contributor = contributors[name];
+    for (const [name, events] of Object.entries(contributors)) {
         const detailedStats = {
-            resolvedIssues: countEventsByType(contributor, 'IssuesEvent'),
-            newMergedPulls: countEventsByType(contributor, 'PullRequestEvent'),
-            pullRequestsReview: countEventsByType(contributor, 'PullRequestReviewEvent'),
-            totalCommits: countEventsByType(contributor, 'PushEvent'),
+            resolvedIssues: countEventsByType(events, 'IssuesEvent'),
+            newPulls: countEventsByType(events, 'newPullEvent'),
+            mergedPulls: countEventsByType(events, 'mergePullEvent'),
+            pullRequestsReview: countEventsByType(events, 'PullRequestReviewEvent'),
+            totalCommits: countEventsByType(events, 'PushEvent'),
         };
 
-        // Skip users who only comment in ussues
+        // Skip users who don't have activity that is needed for detailed stats
         const isActive = Object.values(detailedStats).some((stat) => stat !== 0);
         if (isActive) {
             detailedContributorStats[name] = detailedStats;
