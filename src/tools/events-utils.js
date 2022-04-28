@@ -66,6 +66,37 @@ const isNewlyCreated = (ghObject, searchTime) => {
     return searchTimeNum < createTimeNum;
 };
 
+/**
+ * Counts commits in given PushEvents
+ *
+ * @param {Array.<Object>} pushEvents array with PushEvents
+ * @return {number}
+ */
+const getCommitsCount = (pushEvents) => {
+    let commitsCount = 0;
+    pushEvents.forEach((pushEvent) => {
+        commitsCount += pushEvent.payload.commits.length;
+    });
+    return commitsCount;
+};
+
+/**
+ * Counts events of specified type for contributor
+ * @param {Object} contributor contributor object
+ * @param {string} eventType event type as per Github events doc
+ * @return {number}
+ */
+const countEventsByType = (contributor, eventType) => {
+    if (typeof contributor[eventType] === 'undefined') {
+        return 0;
+    }
+    if (contributor.eventType === 'PushEvent') {
+        return getCommitsCount(contributor.PushEvent);
+    }
+
+    return contributor[eventType].length;
+};
+
 module.exports = {
     removeOldEvents,
     isOpenedAction,
@@ -73,4 +104,6 @@ module.exports = {
     isStale,
     isMerged,
     isNewlyCreated,
+    getCommitsCount,
+    countEventsByType,
 };
