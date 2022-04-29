@@ -9,11 +9,12 @@ const printStats = (statistics) => {
         generalRepoStats,
         generalContributorStats,
         detailedContributorStats,
+        hourlyContributorActivity,
     } = statistics;
 
     printGeneralRepoStats(generalRepoStats);
     printByGeneralActivity(generalContributorStats);
-    printByDetailedActivity(detailedContributorStats);
+    printByDetailedActivity(detailedContributorStats, hourlyContributorActivity);
 };
 
 module.exports = printStats;

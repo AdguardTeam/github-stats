@@ -4,8 +4,9 @@ CLI App that polls data from GitHub REST API, stores it and gives analysis on co
 * [API](#API)
 * [How to use](#how-to-use)
 * [Results](#results)
+* [Notes](#notes)
 
-## <a id="API"></a>API
+## <a id="API"></a> API
 * Issues endpoint: 'GET /repos/{owner}/{repo}/issues'
 * GitHub Events endpoint: 'GET /repos/{owner}/{repo}/events'
 * [GitHub Event Types](https://docs.github.com/en/developers/webhooks-and-events/events/github-event-types#pullrequestevent)
@@ -87,3 +88,8 @@ hour	activity
 24		0   		|
 
 ```
+
+## <a id="notes"></a> Notes
+> Only <b>author of pull request should perform merge of said pull request</b>, otherwise app won't be able to count activity adequately.
+
+> 'since' command argument should be a timestamp in ISO 8601 format: YYYY-MM-DDTHH:MM:SS (without offseet flags like YYYY-MM-DDTHH:MM:SSZ)

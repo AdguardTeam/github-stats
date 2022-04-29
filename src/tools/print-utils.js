@@ -33,15 +33,34 @@ const printByGeneralActivity = (generalActivity) => {
     });
 };
 
-const printByDetailedActivity = (detailedActivity) => {
+const printByHourlyActivity = (hourlyContributorActivity) => {
+    const currentDate = new Date().toISOString().split('T')[0];
+    const totalActivity = hourlyContributorActivity.reduce((prev, current) => prev + current, 0);
+    if (totalActivity <= 0) {
+        return;
+    }
+    console.log('\n*Daily activity*\n');
+    console.log(`*${currentDate}*\n`);
+    console.log('hour \t activity');
+    hourlyContributorActivity.forEach((activity, hour) => {
+        const percent = Math.floor((activity / totalActivity) * 100);
+        const bar = `|${'█'.repeat(percent)}`;
+
+        console.log(`${hour} \t ${activity} \t ${bar}`);
+    });
+};
+
+const printByDetailedActivity = (detailedActivity, hourlyActivity) => {
     console.log('## Detailed contributor statistics \n');
     // eslint-disable-next-line no-restricted-syntax
     for (const [name, activities] of Object.entries(detailedActivity)) {
-        console.log(`### ${name} \n`);
+        console.log(`\n### ${name} \n`);
         console.log(`* Resolved issues: ${activities.resolvedIssues}`);
         console.log(`* New pull requests (merged): ${activities.newPulls} (${activities.mergedPulls})`);
         console.log(`* Pull requests review activity: ${activities.pullRequestsReview}`);
-        console.log(`* Total commits: ${activities.totalCommits} \n\n`);
+        console.log(`* Total commits: ${activities.totalCommits}`);
+
+        printByHourlyActivity(hourlyActivity[name]);
     }
 };
 

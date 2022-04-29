@@ -6,7 +6,9 @@
  */
 const removeOldEvents = (events, expirationDays) => {
     return events.filter((event) => {
-        const createdTime = new Date(event.created_at).getTime();
+        // Remove offset flag 'Z' from date
+        const createdAt = event.created_at.slice(0, -1);
+        const createdTime = new Date(createdAt).getTime();
         const daysAlive = (Date.now() - createdTime) / (1000 * 3600 * 24);
         return daysAlive <= expirationDays;
     });
@@ -53,15 +55,17 @@ const isMerged = (pull) => {
  * Checks if GitHub object was created since time specified
  *
  * @param {object} ghObject GitHub API response object
- * @param {string} searchTime timestamp in ISO 8601 format: YYYY-MM-DDTHH:MM:SSZ
+ * @param {string} searchTime timestamp in ISO 8601 format: YYYY-MM-DDTHH:MM:SS
  * @return {boolean}
  */
 const isNewlyCreated = (ghObject, searchTime) => {
     if (typeof searchTime === 'undefined') {
         return true;
     }
+    // Remove offset flag 'Z' from create date
+    const createdAt = ghObject.created_at.slice(0, -1);
     const searchTimeNum = Number(new Date(searchTime));
-    const createTimeNum = Number(new Date(ghObject.created_at));
+    const createTimeNum = Number(new Date(createdAt));
 
     return searchTimeNum < createTimeNum;
 };
@@ -82,33 +86,74 @@ const getCommitsCount = (pushEvents) => {
 
 /**
  * Counts events of specified type for contributor
- * @param {Object} events contributor event object
+ * @param {Object} contributor contributor events object
  * @param {string} eventType event type as per Github events doc
  * @return {number}
  */
-const countEventsByType = (events, eventType) => {
-    if (eventType === 'newPullEvent' && events.PullRequestEvent) {
-        const newPullsCount = events
+const countEventsByType = (contributor, eventType) => {
+    if (eventType === 'newPullEvent' && contributor.PullRequestEvent) {
+        const newPullsCount = contributor
             .PullRequestEvent
             .filter((event) => !isMerged(event))
             .length;
         return newPullsCount;
     }
-    if (eventType === 'mergePullEvent' && events.PullRequestEvent) {
-        const mergedPullsCount = events
+    if (eventType === 'mergePullEvent' && contributor.PullRequestEvent) {
+        const mergedPullsCount = contributor
             .PullRequestEvent
             .filter((event) => !isMerged(event))
             .length;
         return mergedPullsCount;
     }
-    if (typeof events[eventType] === 'undefined') {
+    if (typeof contributor[eventType] === 'undefined') {
         return 0;
     }
     if (eventType === 'PushEvent') {
-        return getCommitsCount(events.PushEvent);
+        return getCommitsCount(contributor.PushEvent);
     }
 
-    return events[eventType].length;
+    return contributor[eventType].length;
+};
+
+/**
+ * Filter events from 00:00 to current time and sort them by hour
+ * @param {Object} contributor contributor events object
+ * @return {Object}
+ */
+const sortEventsByHour = (contributor) => {
+    const allEvents = [];
+    // eslint-disable-next-line no-restricted-syntax
+    for (const value of Object.values(contributor)) {
+        allEvents.push(value);
+    }
+
+    const todayEvents = allEvents
+        .flat()
+        .filter((event) => {
+            // Remove offset flag 'Z' from date
+            const createdAt = event.created_at.slice(0, -1);
+            const createdDay = new Date(createdAt).getDate();
+            const today = new Date().getDate();
+            return createdDay === today;
+        });
+
+    const eventsByHour = [];
+    for (let i = 0; i <= 23; i += 1) {
+        eventsByHour[i] = [];
+    }
+
+    // Sort events by their creation hour
+    todayEvents.forEach((event) => {
+        // Remove offset flag 'Z' from date
+        const createdAt = event.created_at.slice(0, -1);
+        const hour = new Date(createdAt).getHours();
+        eventsByHour[hour].push(event);
+    });
+
+    // Modify events into activities by collapsing event subarrays into their length
+    const activityByHour = eventsByHour.map((hourEvents) => hourEvents.length);
+
+    return activityByHour;
 };
 
 module.exports = {
@@ -120,4 +165,5 @@ module.exports = {
     isNewlyCreated,
     getCommitsCount,
     countEventsByType,
+    sortEventsByHour,
 };
