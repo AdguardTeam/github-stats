@@ -45,6 +45,8 @@ const prepareContributorStat = (events) => {
         const username = actor.login;
         let contributorName;
         switch (type) {
+            case EVENT_TYPES.PULL_REQUEST_REVIEW_EVENT:
+            case EVENT_TYPES.ISSUE_COMMENT_EVENT:
             case EVENT_TYPES.PUSH_EVENT: {
                 contributorName = username;
                 break;
@@ -62,14 +64,6 @@ const prepareContributorStat = (events) => {
                     // merged pull request count for the one who opened it
                     contributorName = payload.pull_request.user.login;
                 }
-                break;
-            }
-            case EVENT_TYPES.ISSUE_COMMENT_EVENT: {
-                contributorName = username;
-                break;
-            }
-            case EVENT_TYPES.PULL_REQUEST_REVIEW_EVENT: {
-                contributorName = username;
                 break;
             }
             default:
