@@ -25,7 +25,7 @@ const prepareContributorStat = (events) => {
                     const commitsCount = getCommitsCount(this[eventType]);
                     activityCount += commitsCount;
                 } else {
-                    activityCount += eventType.length;
+                    activityCount += this[eventType].length;
                 }
             }
             return activityCount;
