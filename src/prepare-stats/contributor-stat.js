@@ -34,7 +34,7 @@ const prepareContributorStat = (events) => {
 
     /**
      * Checks if event counts as activity and returns corresponding contributor
-     * @param {Array.<Object>} events array with GitHub event objects
+     * @param {Object} events array with GitHub event objects
      * @return {string|undefined} returns author name for activities and undefined for other events
      */
     const getActivityAuthor = (event) => {
