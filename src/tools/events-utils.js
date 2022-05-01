@@ -1,5 +1,7 @@
 const {
-    EVENT_TYPES
+    EVENT_TYPES,
+    LABEL_NAMES,
+    ACTION_NAMES,
 } = require('../constants');
 
 /**
@@ -23,14 +25,14 @@ const removeOldEvents = (events, expirationDays) => {
  * @param {Object} e github event object
  * @return {boolean}
  */
-const isOpenedAction = (e) => e.payload.action === 'opened';
+const isOpenedAction = (e) => e.payload.action === ACTION_NAMES.OPENED;
 
 /**
  * Determines if Github event is 'closed'
  * @param {Object} e github event object
  * @return {boolean}
  */
-const isClosedAction = (e) => e.payload.action === 'closed';
+const isClosedAction = (e) => e.payload.action === ACTION_NAMES.CLOSED;
 
 /**
  * Determines if Github issue has Stale label
@@ -42,7 +44,7 @@ const isStale = (issue) => {
     if (!labels || labels.length === 0) {
         return false;
     }
-    return labels.some((label) => label.name === 'Stale');
+    return labels.some((label) => label.name === LABEL_NAMES.STALE);
 };
 
 /**

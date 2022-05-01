@@ -14,10 +14,19 @@ const EVENT_TYPES = {
     NEW_PULL_EVENT: 'newPullEvent',
     MERGED_PULL_EVENT: 'mergePullEvent',
 };
+const LABEL_NAMES = {
+    STALE: 'Stale',
+};
+const ACTION_NAMES = {
+    OPENED: 'opened',
+    CLOSED: 'closed',
+};
 
 module.exports = {
     EVENT_EXPIRATION_DAYS,
     COLLECTION_PATH,
     ENDPOINTS,
     EVENT_TYPES,
+    LABEL_NAMES,
+    ACTION_NAMES,
 };
