@@ -40,7 +40,7 @@ const prepareStats = async (requestData, searchTime) => {
         }
     }
 
-    //  Sort contributors events to get hourly activity by contrributor name
+    //  Sort contributors events to get hourly activity by contributor name
     const hourlyContributorActivity = {};
     // eslint-disable-next-line no-restricted-syntax
     for (const [name, events] of Object.entries(contributors)) {
