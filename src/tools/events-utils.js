@@ -77,10 +77,10 @@ const isCreatedSince = (ghObject, searchTime) => {
  * @return {number}
  */
 const getCommitsCount = (pushEvents) => {
-    let commitsCount = 0;
-    pushEvents.forEach((pushEvent) => {
-        commitsCount += pushEvent.payload.commits.length;
-    });
+    const commitsCount = pushEvents.reduce((acc, event) => {
+        return acc + event.payload.commits.length;
+    }, 0);
+
     return commitsCount;
 };
 
