@@ -2,14 +2,14 @@ const prepareGeneralRepoStats = require('./general-repo-stat');
 const prepareContributorStat = require('./contributor-stat');
 const { getEventsFromCollection } = require('../tools/fs-utils');
 const {
-    isNewlyCreated,
+    isCreatedSince,
     countEventsByType,
     sortEventsByHour,
 } = require('../tools/events-utils');
 
 const prepareStats = async (requestData, searchTime) => {
     const collection = getEventsFromCollection();
-    const eventsBySearchDate = collection.filter((event) => isNewlyCreated(event, searchTime));
+    const eventsBySearchDate = collection.filter((event) => isCreatedSince(event, searchTime));
 
     const generalRepoStats = await prepareGeneralRepoStats(eventsBySearchDate, requestData);
     const contributors = prepareContributorStat(eventsBySearchDate);

@@ -58,7 +58,7 @@ const isMerged = (pull) => {
  * @param {string} searchTime timestamp in ISO 8601 format: YYYY-MM-DDTHH:MM:SS
  * @return {boolean}
  */
-const isNewlyCreated = (ghObject, searchTime) => {
+const isCreatedSince = (ghObject, searchTime) => {
     if (typeof searchTime === 'undefined') {
         return true;
     }
@@ -162,7 +162,7 @@ module.exports = {
     isClosedAction,
     isStale,
     isMerged,
-    isNewlyCreated,
+    isCreatedSince,
     getCommitsCount,
     countEventsByType,
     sortEventsByHour,
