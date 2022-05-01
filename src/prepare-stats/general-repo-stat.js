@@ -24,7 +24,7 @@ const prepareGeneralRepoStats = async (events, requestData) => {
     // Remove pull requests from issues
     const remainingIssues = openIssues.filter((issue) => {
         const pullRequest = issue.pull_request;
-        return typeof pullRequest === 'undefined';
+        return !pullRequest;
     });
 
     const generalRepoStats = {

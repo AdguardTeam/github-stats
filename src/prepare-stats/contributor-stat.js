@@ -9,7 +9,7 @@ const prepareContributorStat = (events) => {
     class Contributor {
         addActivityEvent(event) {
             const { type } = event;
-            if (typeof this[type] === 'undefined') {
+            if (!this[type]) {
                 // Init event type if there is no such type already
                 this[type] = [];
             }
@@ -79,11 +79,11 @@ const prepareContributorStat = (events) => {
     events.forEach((event) => {
         const contributorName = getActivityAuthor(event);
         // Events that don't count as activity are not saved anywhere
-        if (typeof contributorName === 'undefined') {
+        if (!contributorName) {
             return;
         }
         // Init contributor if there isn't one
-        if (typeof contributors[contributorName] === 'undefined') {
+        if (!contributors[contributorName]) {
             contributors[contributorName] = new Contributor();
         }
         contributors[contributorName].addActivityEvent(event);

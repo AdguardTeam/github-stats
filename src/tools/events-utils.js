@@ -59,7 +59,7 @@ const isMerged = (pull) => {
  * @return {boolean}
  */
 const isCreatedSince = (ghObject, searchTime) => {
-    if (typeof searchTime === 'undefined') {
+    if (!searchTime) {
         return true;
     }
     // Remove offset flag 'Z' from create date
@@ -105,7 +105,7 @@ const countEventsByType = (contributor, eventType) => {
             .length;
         return mergedPullsCount;
     }
-    if (typeof contributor[eventType] === 'undefined') {
+    if (!contributor[eventType]) {
         return 0;
     }
     if (eventType === 'PushEvent') {
