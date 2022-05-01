@@ -6,6 +6,9 @@ const {
     countEventsByType,
     sortEventsByHour,
 } = require('../tools/events-utils');
+const {
+    EVENT_TYPES,
+} = require('../constants');
 
 const prepareStats = async (requestData, searchTime) => {
     const collection = getEventsFromCollection();
@@ -26,11 +29,11 @@ const prepareStats = async (requestData, searchTime) => {
     // eslint-disable-next-line no-restricted-syntax
     for (const [name, events] of Object.entries(contributors)) {
         const detailedStats = {
-            resolvedIssues: countEventsByType(events, 'IssuesEvent'),
-            newPulls: countEventsByType(events, 'newPullEvent'),
-            mergedPulls: countEventsByType(events, 'mergePullEvent'),
-            pullRequestsReview: countEventsByType(events, 'PullRequestReviewEvent'),
-            totalCommits: countEventsByType(events, 'PushEvent'),
+            resolvedIssues: countEventsByType(events, EVENT_TYPES.ISSUES_EVENT),
+            newPulls: countEventsByType(events, EVENT_TYPES.NEW_PULL_EVENT),
+            mergedPulls: countEventsByType(events, EVENT_TYPES.MERGED_PULL_EVENT),
+            pullRequestsReview: countEventsByType(events, EVENT_TYPES.PULL_REQUEST_REVIEW_EVENT),
+            totalCommits: countEventsByType(events, EVENT_TYPES.PUSH_EVENT),
         };
 
         // Skip users who don't have activity that is needed for detailed stats

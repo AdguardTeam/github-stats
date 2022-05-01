@@ -1,3 +1,7 @@
+const {
+    EVENT_TYPES
+} = require('../constants');
+
 /**
  * Removes events that are older than specified date
  * @param {Array.<Object>} events array with GitHub event objects
@@ -91,14 +95,16 @@ const getCommitsCount = (pushEvents) => {
  * @return {number}
  */
 const countEventsByType = (contributor, eventType) => {
-    if (eventType === 'newPullEvent' && contributor.PullRequestEvent) {
+    if (eventType === EVENT_TYPES.NEW_PULL_EVENT
+        && contributor[EVENT_TYPES.PULL_REQUEST_EVENT]) {
         const newPullsCount = contributor
             .PullRequestEvent
             .filter((event) => !isMerged(event))
             .length;
         return newPullsCount;
     }
-    if (eventType === 'mergePullEvent' && contributor.PullRequestEvent) {
+    if (eventType === EVENT_TYPES.MERGED_PULL_EVENT
+        && contributor[EVENT_TYPES.PULL_REQUEST_EVENT]) {
         const mergedPullsCount = contributor
             .PullRequestEvent
             .filter((event) => !isMerged(event))
@@ -108,7 +114,7 @@ const countEventsByType = (contributor, eventType) => {
     if (!contributor[eventType]) {
         return 0;
     }
-    if (eventType === 'PushEvent') {
+    if (eventType === EVENT_TYPES.PUSH_EVENT) {
         return getCommitsCount(contributor.PushEvent);
     }
 

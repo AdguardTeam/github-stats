@@ -1,20 +1,23 @@
+const { getOpenIssues } = require('../tools/gh-utils');
 const {
     isStale,
     isMerged,
     isClosedAction,
     isOpenedAction,
 } = require('../tools/events-utils');
-const { getOpenIssues } = require('../tools/gh-utils');
+const {
+    EVENT_TYPES,
+} = require('../constants');
 
 const prepareGeneralRepoStats = async (events, requestData) => {
-    const issuesEvents = events.filter((e) => e.type === 'IssuesEvent');
+    const issuesEvents = events.filter((e) => e.type === EVENT_TYPES.ISSUES_EVENT);
     const newIssueEvents = issuesEvents.filter((e) => isOpenedAction(e));
     const resolvedIssueEvents = issuesEvents
         .filter((e) => isClosedAction(e) && !isStale(e.payload.issue));
     const closedAsStaleIssueEvents = issuesEvents
         .filter((e) => isClosedAction(e) && isStale(e.payload.issue));
 
-    const pullsEvents = events.filter((e) => e.type === 'PullRequestEvent');
+    const pullsEvents = events.filter((e) => e.type === EVENT_TYPES.PULL_REQUEST_EVENT);
     const newPullEvents = pullsEvents.filter((e) => isOpenedAction(e));
     const mergedPullEvents = pullsEvents.filter((e) => isMerged(e));
 

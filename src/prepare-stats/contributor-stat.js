@@ -2,6 +2,9 @@ const {
     isStale,
     getCommitsCount,
 } = require('../tools/events-utils');
+const {
+    EVENT_TYPES,
+} = require('../constants');
 
 const prepareContributorStat = (events) => {
     const contributors = {};
@@ -20,7 +23,7 @@ const prepareContributorStat = (events) => {
             let activityCount = 0;
             // eslint-disable-next-line no-restricted-syntax
             for (const eventType of Object.keys(this)) {
-                if (eventType === 'PushEvent') {
+                if (eventType === EVENT_TYPES.PUSH_EVENT) {
                     // Extract commits from PushEvents to count them separately
                     const commitsCount = getCommitsCount(this[eventType]);
                     activityCount += commitsCount;
@@ -42,17 +45,17 @@ const prepareContributorStat = (events) => {
         const username = actor.login;
         let contributorName;
         switch (type) {
-            case 'PushEvent': {
+            case EVENT_TYPES.PUSH_EVENT: {
                 contributorName = username;
                 break;
             }
-            case 'IssuesEvent': {
+            case EVENT_TYPES.ISSUES_EVENT: {
                 if (payload.action === 'closed' && !isStale(payload.issue)) {
                     contributorName = username;
                 }
                 break;
             }
-            case 'PullRequestEvent': {
+            case EVENT_TYPES.PULL_REQUEST_EVENT: {
                 // count only newly opened & merged pulls
                 if (payload.action === 'opened'
                     || (payload.action === 'closed' && typeof payload.pull_request.merged_at === 'string')) {
@@ -61,11 +64,11 @@ const prepareContributorStat = (events) => {
                 }
                 break;
             }
-            case 'IssueCommentEvent': {
+            case EVENT_TYPES.ISSUE_COMMENT_EVENT: {
                 contributorName = username;
                 break;
             }
-            case 'PullRequestReviewEvent': {
+            case EVENT_TYPES.PULL_REQUEST_REVIEW_EVENT: {
                 contributorName = username;
                 break;
             }
