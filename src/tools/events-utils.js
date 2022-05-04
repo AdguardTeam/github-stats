@@ -12,8 +12,7 @@ const {
  */
 const removeOldEvents = (events, expirationDays) => {
     return events.filter((event) => {
-        // Remove offset flag 'Z' from date
-        const createdAt = event.created_at.slice(0, -1);
+        const createdAt = event.created_at;
         const createdTime = new Date(createdAt).getTime();
         const daysAlive = (Date.now() - createdTime) / (1000 * 3600 * 24);
         return daysAlive <= expirationDays;
@@ -68,8 +67,7 @@ const isCreatedSince = (ghObject, searchTime) => {
     if (!searchTime) {
         return true;
     }
-    // Remove offset flag 'Z' from create date
-    const createdAt = ghObject.created_at.slice(0, -1);
+    const createdAt = ghObject.created_at;
     const searchTimeNum = Number(new Date(searchTime));
     const createTimeNum = Number(new Date(createdAt));
 
@@ -138,8 +136,7 @@ const sortEventsByHour = (contributor) => {
     const todayEvents = allEvents
         .flat()
         .filter((event) => {
-            // Remove offset flag 'Z' from date
-            const createdAt = event.created_at.slice(0, -1);
+            const createdAt = event.created_at;
             const createdDay = new Date(createdAt).getDate();
             const today = new Date().getDate();
             return createdDay === today;
@@ -152,8 +149,7 @@ const sortEventsByHour = (contributor) => {
 
     // Sort events by their creation hour
     todayEvents.forEach((event) => {
-        // Remove offset flag 'Z' from date
-        const createdAt = event.created_at.slice(0, -1);
+        const createdAt = event.created_at;
         const hour = new Date(createdAt).getHours();
         eventsByHour[hour].push(event);
     });
