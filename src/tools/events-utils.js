@@ -95,29 +95,31 @@ const getCommitsCount = (pushEvents) => {
  */
 const countEventsByType = (contributor, eventType) => {
     if (eventType === EVENT_TYPES.NEW_PULL_EVENT
-        && contributor[EVENT_TYPES.PULL_REQUEST_EVENT]) {
+        && contributor.events[EVENT_TYPES.PULL_REQUEST_EVENT]) {
         const newPullsCount = contributor
+            .events
             .PullRequestEvent
             .filter((event) => !isMerged(event))
             .length;
         return newPullsCount;
     }
     if (eventType === EVENT_TYPES.MERGED_PULL_EVENT
-        && contributor[EVENT_TYPES.PULL_REQUEST_EVENT]) {
+        && contributor.events[EVENT_TYPES.PULL_REQUEST_EVENT]) {
         const mergedPullsCount = contributor
+            .events
             .PullRequestEvent
             .filter((event) => !isMerged(event))
             .length;
         return mergedPullsCount;
     }
-    if (!contributor[eventType]) {
+    if (!contributor.events[eventType]) {
         return 0;
     }
     if (eventType === EVENT_TYPES.PUSH_EVENT) {
-        return getCommitsCount(contributor.PushEvent);
+        return getCommitsCount(contributor.events.PushEvent);
     }
 
-    return contributor[eventType].length;
+    return contributor.events[eventType].length;
 };
 
 /**
@@ -128,7 +130,7 @@ const countEventsByType = (contributor, eventType) => {
 const sortEventsByHour = (contributor) => {
     const allEvents = [];
     // eslint-disable-next-line no-restricted-syntax
-    for (const value of Object.values(contributor)) {
+    for (const value of Object.values(contributor.events)) {
         allEvents.push(value);
     }
 
