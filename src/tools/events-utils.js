@@ -58,15 +58,15 @@ const isMerged = (pull) => {
 /**
  * Checks if GitHub object was created since time specified
  *
- * @param {object} ghObject GitHub API response object
+ * @param {object} event GitHub API response object
  * @param {string} searchTime timestamp in ISO 8601 format: YYYY-MM-DDTHH:MM:SS
  * @return {boolean}
  */
-const isCreatedSince = (ghObject, searchTime) => {
+const isCreatedSince = (event, searchTime) => {
     if (!searchTime) {
         return true;
     }
-    const createdAt = ghObject.created_at;
+    const createdAt = event.created_at;
     const searchTimeNum = Number(new Date(searchTime));
     const createTimeNum = Number(new Date(createdAt));
 
