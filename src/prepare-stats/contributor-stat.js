@@ -1,4 +1,4 @@
-const Contributor = require('../classes/Contributor');
+const Contributor = require('./Contributor');
 const {
     isStale,
 } = require('../tools/events-utils');

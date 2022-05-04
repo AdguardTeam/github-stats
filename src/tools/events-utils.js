@@ -14,7 +14,7 @@ const removeOldEvents = (events, expirationDays) => {
     return events.filter((event) => {
         const createdAt = event.created_at;
         const createdTime = new Date(createdAt).getTime();
-        return Date.now() - createdTime <= expirationDays * 24 * 60 * 60 * 1000
+        return Date.now() - createdTime <= expirationDays * 24 * 60 * 60 * 1000;
     });
 };
 

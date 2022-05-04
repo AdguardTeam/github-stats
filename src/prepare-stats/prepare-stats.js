@@ -11,7 +11,7 @@ const {
 } = require('../constants');
 
 const prepareStats = async (requestData, searchTime) => {
-    const collection = getEventsFromCollection();
+    const collection = await getEventsFromCollection();
     const eventsBySearchDate = collection.filter((event) => isCreatedSince(event, searchTime));
 
     const generalRepoStats = await prepareGeneralRepoStats(eventsBySearchDate, requestData);
