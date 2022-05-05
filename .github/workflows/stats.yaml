@@ -11,6 +11,7 @@ jobs:
       - name: Print repo statistics
         env:
           INPUT_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          INPUT_PATH: ./events-collection.json
         run: |
           yarn
           yarn stats

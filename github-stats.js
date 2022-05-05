@@ -1,7 +1,9 @@
+const core = require('@actions/core');
 const yargs = require('yargs');
 const prepareStats = require('./src/prepare-stats/prepare-stats');
 const printStats = require('./src/print-stats');
 
+const collectionPath = core.getInput('PATH', { required: true });
 const options = yargs
     .options({
         repo: {
@@ -21,6 +23,6 @@ const defaultRequestData = {
 };
 
 (async () => {
-    const statistics = await prepareStats(defaultRequestData, searchTime);
+    const statistics = await prepareStats(collectionPath, defaultRequestData, searchTime);
     printStats(statistics);
 })();

@@ -10,8 +10,8 @@ const {
     EVENT_TYPES,
 } = require('../constants');
 
-const prepareStats = async (requestData, searchTime) => {
-    const collection = await getEventsFromCollection();
+const prepareStats = async (collectionPath, requestData, searchTime) => {
+    const collection = await getEventsFromCollection(collectionPath);
     const eventsBySearchDate = collection.filter((event) => isCreatedSince(event, searchTime));
 
     const generalRepoStats = await prepareGeneralRepoStats(eventsBySearchDate, requestData);
