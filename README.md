@@ -2,7 +2,7 @@
 
 CLI App that polls data from GitHub REST API, stores it and gives analysis on contributors activity for given repository.
 * [API](#API)
-* [How to use](#how-to-use)
+* [How to run locally](#how-to-run-locally)
 * [Results](#results)
 * [Notes](#notes)
 
@@ -11,12 +11,32 @@ CLI App that polls data from GitHub REST API, stores it and gives analysis on co
 * GitHub Events endpoint: 'GET /repos/{owner}/{repo}/events'
 * [GitHub Event Types](https://docs.github.com/en/developers/webhooks-and-events/events/github-event-types#pullrequestevent)
 
-## <a id="how-to-use"></a> How to use
-Poll new batch of GitHub events and add them to events-collection.json
+## <a id="how-to-run-locally"></a> How to run locally
+Create `.env` file with Github personal access token (PAT)
+```
+OCTO_ACCESS_TOKEN=github_personal_token
+```
+Enable env in `github-poll.js` or `github-stats.js`
+> `yarn add dotenv`
+```
+require('dotenv').config();
+```
+
+Enable `octokit` i n `gh-utils.js` like this
+> `yarn add @actions/core` & `yarn add @actions/github`
+```
+const core = require('@actions/core');
+const github = require('@actions/github');
+
+const { OCTO_ACCESS_TOKEN } = process.env;
+const octokit = new Octokit({ auth: OCTO_ACCESS_TOKEN });
+```
+
+You can now poll new batch of GitHub events and add them to events-collection.json
 ```
 yarn poll
 ```
-Get statistics from file with polled events.
+or get statistics from polled events.
 ```
 yarn stats
 ```

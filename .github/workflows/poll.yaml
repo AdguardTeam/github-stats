@@ -1,0 +1,22 @@
+name: Poll events
+
+on:
+  schedule:
+    - cron: "0 * * * *"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+      - name: Poll Github events
+        env:
+          INPUT_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          yarn
+          yarn poll
+      - name: commit artifacts
+        uses: EndBug/add-and-commit@v9
+        with:
+          message: Events collection update

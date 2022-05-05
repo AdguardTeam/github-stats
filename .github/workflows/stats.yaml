@@ -1,0 +1,16 @@
+name: Get stats
+
+on: workflow_dispatch
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+      - name: Print repo statistics
+        env:
+          INPUT_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          yarn
+          yarn stats

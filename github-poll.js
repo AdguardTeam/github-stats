@@ -1,8 +1,5 @@
-#!/usr/bin/env node
-
-require('dotenv').config();
 const yargs = require('yargs');
-const pollEvents = require('../src/poll-events');
+const pollEvents = require('./src/poll-events');
 
 const options = yargs
     .option({
