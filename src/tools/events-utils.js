@@ -178,15 +178,15 @@ const getActivityAuthor = (event) => {
             break;
         }
         case EVENT_TYPES.ISSUES_EVENT: {
-            if (payload.action === 'closed' && !isStale(payload.issue)) {
+            if (payload.action === ACTION_NAMES.CLOSED && !isStale(payload.issue)) {
                 contributorName = username;
             }
             break;
         }
         case EVENT_TYPES.PULL_REQUEST_EVENT: {
             // count only newly opened & merged pulls
-            if (payload.action === 'opened'
-                || (payload.action === 'closed' && typeof payload.pull_request.merged_at === 'string')) {
+            if (payload.action === ACTION_NAMES.OPENED
+                || (payload.action === ACTION_NAMES.CLOSED && typeof payload.pull_request.merged_at === 'string')) {
                 // merged pull request count for the one who opened it
                 contributorName = payload.pull_request.user.login;
             }
