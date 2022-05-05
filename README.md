@@ -2,6 +2,7 @@
 
 CLI App that polls data from GitHub REST API, stores it and gives analysis on contributors activity for given repository.
 * [API](#API)
+* [Params](#params)
 * [How to run locally](#how-to-run-locally)
     * [Pass github token](#pass-gh-token)
     * [Pass since argument](#pass-since-arg)
@@ -13,7 +14,12 @@ CLI App that polls data from GitHub REST API, stores it and gives analysis on co
 * Issues endpoint: 'GET /repos/{owner}/{repo}/issues'
 * GitHub Events endpoint: 'GET /repos/{owner}/{repo}/events'
 * [GitHub Event Types](https://docs.github.com/en/developers/webhooks-and-events/events/github-event-types#pullrequestevent)
+## <a id="params"></a> Params
+Scripts consume following parameters:
+* <b>GITHUB_TOKEN</b> is provided by Github Actions workflow; can be replaced by Github Personal Access Token (PAT) for local runs ([more here](#pass-gh-token)).
+* <b>since</b> is provided by Github Actions input and fallbacks to default value of last 24h; can be replaced by command line argument for local runs ([more here](#pass-since-arg)).
 
+> 'since' command argument should be a timestamp in ISO 8601 format: YYYY-MM-DDTHH:MM:SS (without offseet flags like YYYY-MM-DDTHH:MM:SSZ)
 ## <a id="how-to-run-locally"></a> How to run locally
 ### <a id="pass-gh-token"></a> 1. Pass Github token with dotenv
 Create `.env` file with Github personal access token (PAT)
@@ -135,5 +141,3 @@ hour	activity
 
 ## <a id="notes"></a> Notes
 > Only <b>author of pull request should perform merge of said pull request</b>, otherwise app won't be able to count activity adequately.
-
-> 'since' command argument should be a timestamp in ISO 8601 format: YYYY-MM-DDTHH:MM:SS (without offseet flags like YYYY-MM-DDTHH:MM:SSZ)
