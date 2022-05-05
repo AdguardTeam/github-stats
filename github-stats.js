@@ -1,9 +1,12 @@
 const core = require('@actions/core');
+const github = require('@actions/github');
 const yargs = require('yargs');
 const prepareStats = require('./src/prepare-stats/prepare-stats');
 const printStats = require('./src/print-stats');
 
 const collectionPath = core.getInput('PATH', { required: true });
+
+const { since } = github.context.payload.inputs;
 const options = yargs
     .options({
         repo: {
@@ -16,7 +19,12 @@ const options = yargs
         },
     })
     .argv;
-const searchTime = options.since;
+let searchTime = since;
+if (!searchTime) {
+    // Set timestamp to 24h ago if not provided
+    const defaultDate = new Date(new Date().getTime() - (24 * 60 * 60 * 1000));
+    searchTime = defaultDate.toISOString();
+}
 const defaultRequestData = {
     owner: options.repo.split('/')[0],
     repo: options.repo.split('/')[1],

@@ -3,6 +3,9 @@
 CLI App that polls data from GitHub REST API, stores it and gives analysis on contributors activity for given repository.
 * [API](#API)
 * [How to run locally](#how-to-run-locally)
+    * [Pass github token](#pass-gh-token)
+    * [Pass since argument](#pass-since-arg)
+    * [Use scripts](#use-script)
 * [Results](#results)
 * [Notes](#notes)
 
@@ -12,6 +15,7 @@ CLI App that polls data from GitHub REST API, stores it and gives analysis on co
 * [GitHub Event Types](https://docs.github.com/en/developers/webhooks-and-events/events/github-event-types#pullrequestevent)
 
 ## <a id="how-to-run-locally"></a> How to run locally
+### <a id="pass-gh-token"></a> 1. Pass Github token with dotenv
 Create `.env` file with Github personal access token (PAT)
 ```
 OCTO_ACCESS_TOKEN=github_personal_token
@@ -22,7 +26,7 @@ Enable env in `github-poll.js` or `github-stats.js`
 require('dotenv').config();
 ```
 
-Enable `octokit` i n `gh-utils.js` like this
+Enable `octokit` in `gh-utils.js` like this
 > `yarn add @actions/core` & `yarn add @actions/github`
 ```
 const { Octokit } = require("@octokit/core");
@@ -30,7 +34,28 @@ const { Octokit } = require("@octokit/core");
 const { OCTO_ACCESS_TOKEN } = process.env;
 const octokit = new Octokit({ auth: OCTO_ACCESS_TOKEN });
 ```
-
+### <a id="pass-since-arg"></a> 2. Pass `since` argument to the script (for `yarn stats` only)
+Add `--since=` argument to `yarn stats` in package.json
+```
+"stats": "node ./github-stats --repo=AdguardTeam/AdguardFilters --since=2022-04-20T00:00:00Z",
+```
+In `github-stats.js`
+```
+const options = yargs
+    .options({
+        repo: {
+            demandOption: true,
+            type: 'string',
+        },
+        since: {
+            demandOption: false,
+            type: 'string',
+        },
+    })
+    .argv
+let searchTime = since;
+```
+### <a id="use-script"></a> 3. Use scripts
 You can now poll new batch of GitHub events and add them to events-collection.json
 ```
 yarn poll

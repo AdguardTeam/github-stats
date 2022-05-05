@@ -5,7 +5,7 @@ on:
     - cron: "0 * * * *"
 
 jobs:
-  test:
+  poll:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2

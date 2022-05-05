@@ -5,7 +5,7 @@
     "license": "MIT",
     "scripts": {
         "poll": "node ./github-poll --repo=AdguardTeam/AdguardFilters",
-        "stats": "node ./github-stats --repo=AdguardTeam/AdguardFilters --since=2022-04-20T00:00:00Z",
+        "stats": "node ./github-stats --repo=AdguardTeam/AdguardFilters",
         "lint": "eslint ."
     },
     "dependencies": {
