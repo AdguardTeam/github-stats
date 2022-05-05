@@ -25,8 +25,7 @@ require('dotenv').config();
 Enable `octokit` i n `gh-utils.js` like this
 > `yarn add @actions/core` & `yarn add @actions/github`
 ```
-const core = require('@actions/core');
-const github = require('@actions/github');
+const { Octokit } = require("@octokit/core");
 
 const { OCTO_ACCESS_TOKEN } = process.env;
 const octokit = new Octokit({ auth: OCTO_ACCESS_TOKEN });
