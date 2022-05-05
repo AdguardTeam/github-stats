@@ -1,6 +1,8 @@
+const core = require('@actions/core');
 const yargs = require('yargs');
 const pollEvents = require('./src/poll-events');
 
+const collectionPath = core.getInput('PATH', { required: true });
 const options = yargs
     .option({
         repo: {
@@ -15,5 +17,5 @@ const defaultRequestData = {
 };
 
 (async () => {
-    await pollEvents(defaultRequestData);
+    await pollEvents(collectionPath, defaultRequestData);
 })();

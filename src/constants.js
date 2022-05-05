@@ -1,5 +1,4 @@
 const EVENT_EXPIRATION_DAYS = 30;
-const COLLECTION_PATH = './events-collection.json';
 const ENDPOINTS = {
     ISSUES: 'GET /repos/{owner}/{repo}/issues',
     GITHUB_EVENTS: 'GET /repos/{owner}/{repo}/events',
@@ -24,7 +23,6 @@ const ACTION_NAMES = {
 
 module.exports = {
     EVENT_EXPIRATION_DAYS,
-    COLLECTION_PATH,
     ENDPOINTS,
     EVENT_TYPES,
     LABEL_NAMES,

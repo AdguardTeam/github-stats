@@ -13,6 +13,7 @@ jobs:
       - name: Poll Github events
         env:
           INPUT_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          INPUT_PATH: ./events-collection.json
         run: |
           yarn
           yarn poll
