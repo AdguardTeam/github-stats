@@ -22,10 +22,15 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 16
+      - name: Install dependencies
+        run: yarn
       - name: Print repo stats
         env:
-          ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           COLLECTION_PATH: ./events_collection.json
-        run: |
-          yarn
-          COLLECTION_PATH=$COLLECTION_PATH TOKEN=$ACCESS_TOKEN ./bin/github-stats.js -r ${{ github.event.inputs.repo }} -s ${{ github.event.inputs.since }}
+        run: >
+          COLLECTION_PATH=$COLLECTION_PATH
+          GITHUB_TOKEN=$ACCESS_TOKEN
+          REPO=${{ github.event.inputs.repo }}
+          SINCE=${{ github.event.inputs.since }}
+          ./bin/github-stats.js
