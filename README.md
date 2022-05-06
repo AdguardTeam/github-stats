@@ -28,4 +28,4 @@ env \
 * `COLLECTION_PATH` — required, path to a file that stores events
 * `GITHUB_TOKEN` — optional, Github Personal Access Token. API rate is limited to 60 requests an hour if not provided.
 * `REPO` — required, path to a Github repository as `{owner}/{repo_name}`
-* `SINCE` — optional, timestamp in ISO 8601 format: `YYYY-MM-DDTHH:MM:SS`. All stored events will be filtered if not provided.
+* `SINCE` — optional, timestamp in ISO 8601 format: `YYYY-MM-DDTHH:MM:SS`. All stored events will be used if not provided.
