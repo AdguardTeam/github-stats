@@ -3,21 +3,27 @@ name: Print stats
 on:
   workflow_dispatch:
     inputs:
+      repo:
+        description: 'Repository path'
+        type: string
+        default: 'AdguardTeam/AdguardFilters'
       since:
         description: 'Timestamp to search from'
         type: string
-        default: ''
+        default: '2022-05-01T00:00:00Z'
 
 jobs:
   stats:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
-      - name: Print repo statistics
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - name: Print repo stats
         env:
-          INPUT_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          INPUT_PATH: ./events-collection.json
+          ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          COLLECTION_PATH: ./events_collection.json
         run: |
           yarn
-          yarn stats
+          COLLECTION_PATH=$COLLECTION_PATH TOKEN=$ACCESS_TOKEN ./bin/github-stats.js -r ${{ github.event.inputs.repo }} -s ${{ github.event.inputs.since }}

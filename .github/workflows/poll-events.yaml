@@ -9,14 +9,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
       - name: Poll Github events
         env:
-          INPUT_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          INPUT_PATH: ./events-collection.json
+          ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          COLLECTION_PATH: ./events_collection.json
         run: |
           yarn
-          yarn poll
+          COLLECTION_PATH=$COLLECTION_PATH TOKEN=$ACCESS_TOKEN ./bin/github-poll.js -r AdguardTeam/AdguardFilters
       - name: commit artifacts
         uses: EndBug/add-and-commit@v9
         with:
