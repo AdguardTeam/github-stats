@@ -1,3 +1,4 @@
+const MILLISECONDS_IN_DAY = 86400000;
 const EVENT_EXPIRATION_DAYS = 30;
 const ENDPOINTS = {
     ISSUES: 'GET /repos/{owner}/{repo}/issues',
@@ -22,6 +23,7 @@ const ACTION_NAMES = {
 };
 
 module.exports = {
+    MILLISECONDS_IN_DAY,
     EVENT_EXPIRATION_DAYS,
     ENDPOINTS,
     EVENT_TYPES,

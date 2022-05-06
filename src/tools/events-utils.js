@@ -1,4 +1,5 @@
 const {
+    MILLISECONDS_IN_DAY,
     EVENT_TYPES,
     LABEL_NAMES,
     ACTION_NAMES,
@@ -11,7 +12,7 @@ const {
  * @return {Array.<Object>} array with GitHub event objects
  */
 const removeOldEvents = (events, expirationDays) => {
-    const expirationTime = expirationDays * 24 * 60 * 60 * 1000;
+    const expirationTime = expirationDays * MILLISECONDS_IN_DAY;
 
     return events.filter((event) => {
         const createdAt = event.created_at;

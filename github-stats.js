@@ -3,6 +3,7 @@ const github = require('@actions/github');
 const yargs = require('yargs');
 const prepareStats = require('./src/prepare-stats/prepare-stats');
 const printStats = require('./src/print-stats');
+const { MILLISECONDS_IN_DAY } = require('./src/constants');
 
 const collectionPath = core.getInput('PATH', { required: true });
 
@@ -22,7 +23,7 @@ const options = yargs
 let searchTime = since;
 if (!searchTime) {
     // Set timestamp to 24h ago if not provided
-    const defaultDate = new Date(new Date().getTime() - (24 * 60 * 60 * 1000));
+    const defaultDate = new Date(new Date().getTime() - MILLISECONDS_IN_DAY);
     searchTime = defaultDate.toISOString();
 }
 const defaultRequestData = {
