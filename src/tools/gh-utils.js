@@ -7,7 +7,7 @@ const octokit = github.getOctokit(token);
 
 /**
  * Get GitHub events from with pagination
- * @return {Array.<Promise>} array with GitHub event objects
+ * @return {Promise<Array<Object>>} array with GitHub event objects
  */
 const getGithubEvents = async (requestData = {}) => {
     const collectedPages = [];
@@ -32,7 +32,7 @@ const getGithubEvents = async (requestData = {}) => {
 
 /**
  * Get open issues with pagination
- * @return {Array.<Promise>} array with open issues
+ * @return {Promise<Array<Object>>} array with open issues
  */
 const getOpenIssues = async (requestData = {}) => {
     const collectedPages = [];
