@@ -4,6 +4,9 @@ on:
   schedule:
     - cron: "0 * * * *"
 
+permissions:
+  contents: write
+
 jobs:
   poll:
     runs-on: ubuntu-latest
