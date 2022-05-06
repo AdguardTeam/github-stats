@@ -142,7 +142,10 @@ const sortEventsByHour = (contributor) => {
             return createdDay === today;
         });
 
-    const eventsByHour = Array(24).fill([]);
+    const eventsByHour = [];
+    for (let i = 0; i <= 23; i += 1) {
+        eventsByHour[i] = [];
+    }
 
     // Sort events by their creation hour
     todayEvents.forEach((event) => {

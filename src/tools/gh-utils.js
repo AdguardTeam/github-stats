@@ -1,9 +1,9 @@
-const core = require('@actions/core');
-const github = require('@actions/github');
+const { Octokit } = require('@octokit/core');
 const { ENDPOINTS } = require('../constants');
 
-const token = core.getInput('TOKEN', { required: true });
-const octokit = github.getOctokit(token);
+const { GITHUB_ACCESS_TOKEN } = process.env;
+
+const octokit = new Octokit({ auth: GITHUB_ACCESS_TOKEN });
 
 /**
  * Get GitHub events from with pagination

@@ -1,11 +1,15 @@
-const core = require('@actions/core');
+#!/usr/bin/env node
+
+require('dotenv').config();
 const yargs = require('yargs');
 const pollEvents = require('./src/poll-events');
 
-const collectionPath = core.getInput('PATH', { required: true });
+const { COLLECTION_PATH } = process.env;
+
 const options = yargs
     .option({
         repo: {
+            alias: 'r',
             demandOption: true,
             type: 'string',
         },
@@ -17,5 +21,5 @@ const defaultRequestData = {
 };
 
 (async () => {
-    await pollEvents(collectionPath, defaultRequestData);
+    await pollEvents(COLLECTION_PATH, defaultRequestData);
 })();
