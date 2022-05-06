@@ -11,10 +11,12 @@ const {
  * @return {Array.<Object>} array with GitHub event objects
  */
 const removeOldEvents = (events, expirationDays) => {
+    const expirationTime = expirationDays * 24 * 60 * 60 * 1000;
+
     return events.filter((event) => {
         const createdAt = event.created_at;
         const createdTime = new Date(createdAt).getTime();
-        return Date.now() - createdTime <= expirationDays * 24 * 60 * 60 * 1000;
+        return Date.now() - createdTime <= expirationTime;
     });
 };
 
@@ -128,25 +130,18 @@ const countEventsByType = (contributor, eventType) => {
  * @return {Object}
  */
 const sortEventsByHour = (contributor) => {
-    const allEvents = [];
-    // eslint-disable-next-line no-restricted-syntax
-    for (const value of Object.values(contributor.events)) {
-        allEvents.push(value);
-    }
+    const allEvents = Object.values(contributor.events);
 
+    const today = new Date().getDate();
     const todayEvents = allEvents
         .flat()
         .filter((event) => {
             const createdAt = event.created_at;
             const createdDay = new Date(createdAt).getDate();
-            const today = new Date().getDate();
             return createdDay === today;
         });
 
-    const eventsByHour = [];
-    for (let i = 0; i <= 23; i += 1) {
-        eventsByHour[i] = [];
-    }
+    const eventsByHour = Array(24).fill([]);
 
     // Sort events by their creation hour
     todayEvents.forEach((event) => {
