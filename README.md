@@ -5,11 +5,11 @@ CLI App that polls data from GitHub REST API, stores it and gives analysis on co
 ## How to run
 ### Poll events
 ```
-COLLECTION_PATH=events_collection.json TOKEN=token ./github-poll.js --repo AdguardTeam/AdguardFilters 
+COLLECTION_PATH=events_collection.json TOKEN=token ./bin/github-poll.js --repo AdguardTeam/AdguardFilters 
 ```
 ### Print stats
 ```
-COLLECTION_PATH=events_collection.json TOKEN=token ./github-stats.js --repo AdguardTeam/AdguardFilters --since 2022-05-01T00:00:00Z
+COLLECTION_PATH=events_collection.json TOKEN=token ./bin/github-stats.js --repo AdguardTeam/AdguardFilters --since 2022-05-01T00:00:00Z
 ```
 ### Params
 * PATH — required, path to a file that stores events
