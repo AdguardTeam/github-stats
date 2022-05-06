@@ -5,10 +5,12 @@ on:
     inputs:
       repo:
         description: 'Repository path'
+        required: true
         type: string
         default: 'AdguardTeam/AdguardFilters'
       since:
         description: 'Timestamp to search from'
+        required: true
         type: string
         default: '2022-05-01T00:00:00Z'
 
