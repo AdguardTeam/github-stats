@@ -10,11 +10,7 @@ const printGeneralRepoStats = (repoStats) => {
 };
 
 const printByGeneralActivity = (generalActivity) => {
-    const statArray = [];
-    // eslint-disable-next-line no-restricted-syntax
-    for (const [key, value] of Object.entries(generalActivity)) {
-        statArray.push([key, value]);
-    }
+    const statArray = Object.entries(generalActivity);
 
     const sortedByActivity = statArray.sort((a, b) => {
         if (a[1] > b[1]) {
