@@ -1,7 +1,8 @@
+/* eslint-disable no-console */
 const {
-    printGeneralRepoStats,
-    printByGeneralActivity,
-    printByDetailedActivity,
+    makeGeneralRepoStatsString,
+    makeGeneralActivityString,
+    makeDetailedActivityString,
 } = require('./tools/print-utils');
 
 const printStats = (statistics) => {
@@ -12,9 +13,14 @@ const printStats = (statistics) => {
         hourlyContributorActivity,
     } = statistics;
 
-    printGeneralRepoStats(generalRepoStats);
-    printByGeneralActivity(generalContributorStats);
-    printByDetailedActivity(detailedContributorStats, hourlyContributorActivity);
+    const generalRepoStatsString = makeGeneralRepoStatsString(generalRepoStats);
+    const generalActivityString = makeGeneralActivityString(generalContributorStats);
+    // eslint-disable-next-line max-len
+    const detailedActivityString = makeDetailedActivityString(detailedContributorStats, hourlyContributorActivity);
+
+    console.log(generalRepoStatsString);
+    console.log(generalActivityString);
+    console.log(detailedActivityString);
 };
 
 module.exports = printStats;

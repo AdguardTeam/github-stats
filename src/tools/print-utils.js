@@ -1,15 +1,18 @@
-/* eslint-disable no-console */
-const printGeneralRepoStats = (repoStats) => {
-    console.log('## General repo statistics \n');
-    console.log(`* New issues: ${repoStats.newIssues}`);
-    console.log(`* Resolved issues: ${repoStats.resolvedIssues}`);
-    console.log(`* Closed as stale: ${repoStats.closedAsStaleIssues}`);
-    console.log(`* New pull requests: ${repoStats.newPulls}`);
-    console.log(`* Merged pull requests: ${repoStats.mergedPulls}`);
-    console.log(`* Remaining issues: ${repoStats.remainingIssues}\n\n`);
+const makeGeneralRepoStatsString = (repoStats) => {
+    const statString = `
+    ## General repo statistics \n
+    * New issues: ${repoStats.newIssues}
+    * Resolved issues: ${repoStats.resolvedIssues}
+    * Closed as stale: ${repoStats.closedAsStaleIssues}
+    * New pull requests: ${repoStats.newPulls}
+    * Merged pull requests: ${repoStats.mergedPulls}
+    * Remaining issues: ${repoStats.remainingIssues}
+    `.replace(/  +/g, '');
+
+    return statString;
 };
 
-const printByGeneralActivity = (generalActivity) => {
+const makeGeneralActivityString = (generalActivity) => {
     const statArray = Object.entries(generalActivity);
 
     const sortedByActivity = statArray.sort((a, b) => {
@@ -22,46 +25,61 @@ const printByGeneralActivity = (generalActivity) => {
         return 0;
     });
 
-    console.log('## General contributors statistics \n');
+    let statString = '\n## General contributors statistics \n\n';
+
     sortedByActivity.forEach((contributor, index) => {
-        const close = index === sortedByActivity.length - 1 ? '\n\n' : '';
-        console.log(`${index + 1}. ${contributor[0]}: ${contributor[1]}${close}`);
+        const statLine = `${index + 1}. ${contributor[0]}: ${contributor[1]}\n`;
+        statString += statLine;
     });
+
+    return statString;
 };
 
-const printByHourlyActivity = (hourlyContributorActivity) => {
+const makeHourlyActivityString = (hourlyContributorActivity) => {
     const currentDate = new Date().toISOString().split('T')[0];
     const totalActivity = hourlyContributorActivity.reduce((prev, current) => prev + current, 0);
     if (totalActivity <= 0) {
-        return;
+        return '';
     }
-    console.log('\n*Daily activity*\n');
-    console.log(`*${currentDate}*\n`);
-    console.log('hour \t activity');
+    let hourlyStatString = `
+    *Daily activity*
+    *${currentDate}*\n
+    hour \t activity
+    `.replace(/  +/g, '');
+
     hourlyContributorActivity.forEach((activity, hour) => {
         const percent = Math.floor((activity / totalActivity) * 100);
         const bar = `|${'█'.repeat(percent)}`;
 
-        console.log(`${hour} \t ${activity} \t ${bar}`);
+        hourlyStatString += `\n${hour} \t ${activity} \t ${bar}`;
     });
+
+    return hourlyStatString;
 };
 
-const printByDetailedActivity = (detailedActivity, hourlyActivity) => {
-    console.log('## Detailed contributor statistics \n');
+const makeDetailedActivityString = (detailedActivity, hourlyActivity) => {
+    let statString = '\n## Detailed contributor statistics';
+
     // eslint-disable-next-line no-restricted-syntax
     for (const [name, activities] of Object.entries(detailedActivity)) {
-        console.log(`\n### ${name} \n`);
-        console.log(`* Resolved issues: ${activities.resolvedIssues}`);
-        console.log(`* New pull requests (merged): ${activities.newPulls} (${activities.mergedPulls})`);
-        console.log(`* Pull requests review activity: ${activities.pullRequestsReview}`);
-        console.log(`* Total commits: ${activities.totalCommits}`);
+        let contributorString = `
+        \n\n### ${name}\n
+        * Resolved issues: ${activities.resolvedIssues}
+        * New pull requests (merged): ${activities.newPulls} (${activities.mergedPulls})
+        * Pull requests review activity: ${activities.pullRequestsReview}
+        * Total commits: ${activities.totalCommits}
+        `.replace(/  +/g, '');
 
-        printByHourlyActivity(hourlyActivity[name]);
+        contributorString += makeHourlyActivityString(hourlyActivity[name]);
+
+        statString += contributorString;
     }
+
+    return statString;
 };
 
 module.exports = {
-    printGeneralRepoStats,
-    printByGeneralActivity,
-    printByDetailedActivity,
+    makeGeneralRepoStatsString,
+    makeGeneralActivityString,
+    makeDetailedActivityString,
 };
