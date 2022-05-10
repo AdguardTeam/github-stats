@@ -1,4 +1,4 @@
-const MILLISECONDS_IN_DAY = 86400000;
+const MILLISECONDS_IN_DAY = 1000 * 60 * 60 * 24;
 const EVENT_EXPIRATION_DAYS = 30;
 const ENDPOINTS = {
     ISSUES: 'GET /repos/{owner}/{repo}/issues',
