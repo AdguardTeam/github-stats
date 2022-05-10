@@ -4,8 +4,8 @@
     "author": "AdGuard",
     "license": "MIT",
     "bin": {
-        "github-poll": "github-poll.js",
-        "github-stats": "github-stats.js"
+        "github-poll": "./bin/github-poll.js",
+        "github-stats": "./bin/github-stats.js"
     },
     "scripts": {
         "lint": "eslint ."

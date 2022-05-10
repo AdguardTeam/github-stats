@@ -2,6 +2,12 @@
 
 CLI App that polls data from GitHub REST API, stores it and gives analysis on contributors activity for given repository.
 
+## How to install
+
+```
+npm i -g @adguard/github-stats
+```
+
 ## How to run
 
 ### Poll events
@@ -11,7 +17,7 @@ env \
     COLLECTION_PATH=events_collection.json \
     GITHUB_TOKEN=token \
     REPO=AdguardTeam/AdguardFilters \
-    ./bin/github-poll.js
+    github-poll
 ```
 ### Print stats
 
@@ -21,7 +27,7 @@ env \
     GITHUB_TOKEN=token \
     REPO=AdguardTeam/AdguardFilters \
     SINCE=2022-05-01T00:00:00Z \
-    ./bin/github-stats.js   
+    github-stats
 ```
 ### Params
 
