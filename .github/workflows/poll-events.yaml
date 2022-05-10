@@ -23,9 +23,6 @@ jobs:
           COLLECTION_PATH: ./events_collection.json
           REPO: AdguardTeam/AdguardFilters
         run: >
-          GITHUB_TOKEN=$ACCESS_TOKEN
-          COLLECTION_PATH=$COLLECTION_PATH
-          REPO=$REPO
           ./bin/github-poll.js 
       - name: commit artifacts
         uses: EndBug/add-and-commit@v9
