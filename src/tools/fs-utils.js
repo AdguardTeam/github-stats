@@ -1,10 +1,8 @@
+const { ensureFile } = require('fs-extra');
 const {
-    appendFile,
     readFile,
     writeFile,
-    access,
-} = require('fs').promises;
-const { constants } = require('fs');
+} = require('fs-extra').promises;
 
 /**
  * Gets array of GitHub event objects from file
@@ -12,13 +10,19 @@ const { constants } = require('fs');
  * @return {Array.<Object>} array with GitHub event objects
  */
 const getEventsFromCollection = async (path) => {
-    const file = await readFile(path, 'utf8');
-    if (file.length === 0) {
-        return [];
+    let collection;
+    try {
+        const file = await readFile(path, 'utf8');
+        if (file.length === 0) {
+            collection = [];
+        } else {
+            collection = JSON.parse(file);
+        }
+    } catch {
+        collection = [];
     }
-    const eventsArray = JSON.parse(file);
 
-    return eventsArray;
+    return collection;
 };
 
 /**
@@ -26,28 +30,11 @@ const getEventsFromCollection = async (path) => {
  * @param {Array.<Object>} events array with GitHub event objects
  */
 const writeEventsToCollection = async (path, events) => {
+    await ensureFile(path);
     await writeFile(path, JSON.stringify(events));
-};
-
-/**
- * Create file on a given path if there is none
- * @param {string} path path to the file
- * @return {boolean}
- */
-const createFileAccess = async (path) => {
-    try {
-        /* eslint-disable no-bitwise */
-        await access(path, constants.F_OK
-            | constants.R_OK
-            | constants.W_OK);
-        /* eslint-enable no-bitwise */
-    } catch {
-        await appendFile(path, '', 'utf8');
-    }
 };
 
 module.exports = {
     getEventsFromCollection,
     writeEventsToCollection,
-    createFileAccess,
 };

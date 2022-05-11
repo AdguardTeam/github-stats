@@ -5,12 +5,10 @@ const { EVENT_EXPIRATION_DAYS } = require('./constants');
 const {
     getEventsFromCollection,
     writeEventsToCollection,
-    createFileAccess,
 } = require('./tools/fs-utils');
 
 const pollEvents = async (collectionPath, requestData) => {
     const newEvents = await getGithubEvents(requestData);
-    await createFileAccess(collectionPath);
     let collection = await getEventsFromCollection(collectionPath);
     collection = removeOldEvents(collection, EVENT_EXPIRATION_DAYS);
     // Merge polled events with storage and de-duplicate by id
