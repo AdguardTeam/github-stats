@@ -4,6 +4,14 @@ const { getEventsFromCollection } = require('../tools/fs-utils');
 const { isCreatedSince, countEventsByType, sortEventsByHour } = require('../tools/events-utils');
 const { EVENT_TYPES } = require('../constants');
 
+/**
+ * Process all stored events to compose statistics object
+ *
+ * @param {string} collectionPath path to events collection
+ * @param {Object} commonRequestData
+ * @param {string} searchTime timestamp from which to get events
+ * @return {Object}
+ */
 const prepareStats = async (collectionPath, commonRequestData, searchTime) => {
     const collection = await getEventsFromCollection(collectionPath);
     const eventsBySearchDate = collection.filter((event) => isCreatedSince(event, searchTime));

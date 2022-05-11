@@ -7,6 +7,13 @@ const {
 } = require('../tools/events-utils');
 const { EVENT_TYPES } = require('../constants');
 
+/**
+ * Make general repo stats object from input events
+ *
+ * @param {Array<Object>} events array of Github events objects
+ * @param {Object} commonRequestData
+ * @return {Object}
+ */
 const prepareGeneralRepoStats = async (events, commonRequestData) => {
     const issuesEvents = events.filter((e) => e.type === EVENT_TYPES.ISSUES_EVENT);
     const newIssueEvents = issuesEvents.filter((e) => isOpenedAction(e));

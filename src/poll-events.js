@@ -4,6 +4,12 @@ const { getGithubEvents } = require('./tools/gh-utils');
 const { EVENT_EXPIRATION_DAYS } = require('./constants');
 const { getEventsFromCollection, writeEventsToCollection } = require('./tools/fs-utils');
 
+/**
+ * Polls events from Github Events API and stores them on a given path
+ *
+ * @param {string} collectionPath path to events collection
+ * @param {Object} commonRequestData
+ */
 const pollEvents = async (collectionPath, commonRequestData) => {
     const newEvents = await getGithubEvents(commonRequestData);
     let collection = await getEventsFromCollection(collectionPath);

@@ -1,6 +1,12 @@
 const Contributor = require('./Contributor');
 const { getActivityAuthor } = require('../tools/events-utils');
 
+/**
+ * Sorts events by contributor name and event type
+ *
+ * @param {Array<Object>} events array of Github events objects
+ * @return {Object}
+ */
 const prepareContributorStat = (events) => {
     const contributors = events.reduce((acc, event) => {
         const contributorName = getActivityAuthor(event);
