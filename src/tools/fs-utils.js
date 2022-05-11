@@ -1,5 +1,4 @@
-const { ensureFile } = require('fs-extra');
-const { readFile, writeFile } = require('fs-extra').promises;
+const { readFile, writeFile, ensureFile } = require('fs-extra');
 
 /**
  * Gets array of GitHub event objects from file
