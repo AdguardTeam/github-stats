@@ -2,6 +2,8 @@
 
 CLI App that polls data from GitHub REST API, stores it and gives analysis on contributors activity for given repository.
 
+Examples of Github Actions for these scripts can be found in `examples` folder.
+
 ## How to install
 
 ```
