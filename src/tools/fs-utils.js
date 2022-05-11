@@ -7,7 +7,7 @@ const {
 /**
  * Gets array of GitHub event objects from file
  * @param {string} path path to the file to read from
- * @return {Array.<Object>} array with GitHub event objects
+ * @return {Promise<Array<Object>>} array with GitHub event objects
  */
 const getEventsFromCollection = async (path) => {
     let collection;
