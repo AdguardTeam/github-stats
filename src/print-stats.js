@@ -24,4 +24,4 @@ const printStats = (statistics) => {
     console.log(detailedActivityString);
 };
 
-module.exports = printStats;
+exports.printStats = printStats;

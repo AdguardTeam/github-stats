@@ -1,5 +1,5 @@
-const prepareGeneralRepoStats = require('./general-repo-stat');
-const prepareContributorStat = require('./contributor-stat');
+const { prepareGeneralRepoStats } = require('./general-repo-stat');
+const { prepareContributorStat } = require('./contributor-stat');
 const { getEventsFromCollection } = require('../tools/fs-utils');
 const { isCreatedSince, countEventsByType, sortEventsByHour } = require('../tools/events-utils');
 const { EVENT_TYPES } = require('../constants');
@@ -60,4 +60,4 @@ const prepareStats = async (collectionPath, commonRequestData, searchTime) => {
     };
 };
 
-module.exports = prepareStats;
+exports.prepareStats = prepareStats;

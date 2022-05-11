@@ -19,4 +19,4 @@ const pollEvents = async (collectionPath, commonRequestData) => {
     await writeEventsToCollection(collectionPath, mergedEvents);
 };
 
-module.exports = pollEvents;
+exports.pollEvents = pollEvents;

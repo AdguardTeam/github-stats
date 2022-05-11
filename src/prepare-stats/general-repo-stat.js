@@ -46,4 +46,4 @@ const prepareGeneralRepoStats = async (events, commonRequestData) => {
     return generalRepoStats;
 };
 
-module.exports = prepareGeneralRepoStats;
+exports.prepareGeneralRepoStats = prepareGeneralRepoStats;

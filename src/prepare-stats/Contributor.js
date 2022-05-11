@@ -31,4 +31,4 @@ class Contributor {
     }
 }
 
-module.exports = Contributor;
+exports.Contributor = Contributor;

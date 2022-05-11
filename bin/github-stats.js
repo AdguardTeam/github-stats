@@ -2,8 +2,8 @@
 
 require('dotenv').config();
 
-const prepareStats = require('../src/prepare-stats/prepare-stats');
-const printStats = require('../src/print-stats');
+const { prepareStats } = require('../src/prepare-stats/prepare-stats');
+const { printStats } = require('../src/print-stats');
 
 const { COLLECTION_PATH, REPO, SINCE } = process.env;
 

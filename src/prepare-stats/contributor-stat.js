@@ -1,4 +1,4 @@
-const Contributor = require('./Contributor');
+const { Contributor } = require('./Contributor');
 const { getActivityAuthor } = require('../tools/events-utils');
 
 /**
@@ -26,4 +26,4 @@ const prepareContributorStat = (events) => {
     return contributors;
 };
 
-module.exports = prepareContributorStat;
+exports.prepareContributorStat = prepareContributorStat;

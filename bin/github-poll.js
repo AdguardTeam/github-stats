@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 require('dotenv').config();
-const pollEvents = require('../src/poll-events');
+const { pollEvents } = require('../src/poll-events');
 
 const { COLLECTION_PATH, REPO } = process.env;
 
