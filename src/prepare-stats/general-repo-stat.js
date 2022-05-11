@@ -9,7 +9,7 @@ const {
     EVENT_TYPES,
 } = require('../constants');
 
-const prepareGeneralRepoStats = async (events, requestData) => {
+const prepareGeneralRepoStats = async (events, commonRequestData) => {
     const issuesEvents = events.filter((e) => e.type === EVENT_TYPES.ISSUES_EVENT);
     const newIssueEvents = issuesEvents.filter((e) => isOpenedAction(e));
     const resolvedIssueEvents = issuesEvents
@@ -22,7 +22,7 @@ const prepareGeneralRepoStats = async (events, requestData) => {
     const mergedPullEvents = pullsEvents.filter((e) => isMerged(e));
 
     /* Compose general repository statistics */
-    const openIssues = await getOpenIssues(requestData);
+    const openIssues = await getOpenIssues(commonRequestData);
 
     // Remove pull requests from issues
     const remainingIssues = openIssues.filter((issue) => {

@@ -9,7 +9,7 @@ const octokit = new Octokit({ auth: GITHUB_TOKEN });
  * Get GitHub events from with pagination
  * @return {Promise<Array<Object>>} array with GitHub event objects
  */
-const getGithubEvents = async (requestData = {}) => {
+const getGithubEvents = async (commonRequestData = {}) => {
     const collectedPages = [];
 
     let currentLink = 'rel="next"';
@@ -17,7 +17,7 @@ const getGithubEvents = async (requestData = {}) => {
     while (currentLink && currentLink.includes('rel="next"')) {
         // eslint-disable-next-line no-await-in-loop
         const { headers, data } = await octokit.request(ENDPOINTS.GITHUB_EVENTS, {
-            ...requestData,
+            ...commonRequestData,
             page: pageNumber,
         });
 
@@ -34,7 +34,7 @@ const getGithubEvents = async (requestData = {}) => {
  * Get open issues with pagination
  * @return {Promise<Array<Object>>} array with open issues
  */
-const getOpenIssues = async (requestData = {}) => {
+const getOpenIssues = async (commonRequestData = {}) => {
     const collectedPages = [];
 
     let currentLink = 'rel="next"';
@@ -42,7 +42,7 @@ const getOpenIssues = async (requestData = {}) => {
     while (currentLink && currentLink.includes('rel="next"')) {
         // eslint-disable-next-line no-await-in-loop
         const { headers, data } = await octokit.request(ENDPOINTS.ISSUES, {
-            ...requestData,
+            ...commonRequestData,
             state: 'open',
             page: pageNumber,
         });

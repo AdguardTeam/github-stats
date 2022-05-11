@@ -5,11 +5,11 @@ const pollEvents = require('../src/poll-events');
 
 const { COLLECTION_PATH, REPO } = process.env;
 
-const defaultRequestData = {
+const commonRequestData = {
     owner: REPO.split('/')[0],
     repo: REPO.split('/')[1],
 };
 
 (async () => {
-    await pollEvents(COLLECTION_PATH, defaultRequestData);
+    await pollEvents(COLLECTION_PATH, commonRequestData);
 })();
