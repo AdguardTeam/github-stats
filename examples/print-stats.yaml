@@ -28,7 +28,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           COLLECTION_PATH: ./events_collection.json
+          REPO: ${{ github.event.inputs.repo }}
+          SINCE: ${{ github.event.inputs.since }}
         run: >
-          REPO=${{ github.event.inputs.repo }}
-          SINCE=${{ github.event.inputs.since }}
           ./bin/github-stats.js
