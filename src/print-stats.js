@@ -1,9 +1,5 @@
 /* eslint-disable no-console */
-const {
-    makeGeneralRepoStatsString,
-    makeGeneralActivityString,
-    makeDetailedActivityString,
-} = require('./tools/print-utils');
+const { makeGeneralRepoStatsString, makeGeneralActivityString, makeDetailedActivityString } = require('./tools/print-utils');
 
 const printStats = (statistics) => {
     const {

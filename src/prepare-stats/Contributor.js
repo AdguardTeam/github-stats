@@ -1,9 +1,5 @@
-const {
-    getCommitsCount,
-} = require('../tools/events-utils');
-const {
-    EVENT_TYPES,
-} = require('../constants');
+const { getCommitsCount } = require('../tools/events-utils');
+const { EVENT_TYPES } = require('../constants');
 
 class Contributor {
     constructor() {

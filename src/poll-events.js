@@ -2,10 +2,7 @@ const { unionBy } = require('lodash/array');
 const { removeOldEvents } = require('./tools/events-utils');
 const { getGithubEvents } = require('./tools/gh-utils');
 const { EVENT_EXPIRATION_DAYS } = require('./constants');
-const {
-    getEventsFromCollection,
-    writeEventsToCollection,
-} = require('./tools/fs-utils');
+const { getEventsFromCollection, writeEventsToCollection } = require('./tools/fs-utils');
 
 const pollEvents = async (collectionPath, commonRequestData) => {
     const newEvents = await getGithubEvents(commonRequestData);

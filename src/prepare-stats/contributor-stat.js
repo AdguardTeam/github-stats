@@ -1,7 +1,5 @@
 const Contributor = require('./Contributor');
-const {
-    getActivityAuthor,
-} = require('../tools/events-utils');
+const { getActivityAuthor } = require('../tools/events-utils');
 
 const prepareContributorStat = (events) => {
     const contributors = events.reduce((acc, event) => {

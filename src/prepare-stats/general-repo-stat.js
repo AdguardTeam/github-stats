@@ -5,9 +5,7 @@ const {
     isClosedAction,
     isOpenedAction,
 } = require('../tools/events-utils');
-const {
-    EVENT_TYPES,
-} = require('../constants');
+const { EVENT_TYPES } = require('../constants');
 
 const prepareGeneralRepoStats = async (events, commonRequestData) => {
     const issuesEvents = events.filter((e) => e.type === EVENT_TYPES.ISSUES_EVENT);
