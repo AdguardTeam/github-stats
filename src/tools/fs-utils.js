@@ -26,7 +26,7 @@ const getEventsFromCollection = async (path) => {
 };
 
 /**
- * Writes event objects from array to file
+ * Writes event objects from array to path, path is created if there is none
  * @param {Array.<Object>} events array with GitHub event objects
  */
 const writeEventsToCollection = async (path, events) => {
