@@ -22,13 +22,12 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 16
-      - name: Install dependencies
-        run: yarn
+      - name: Install package
+        run: npm i -g @adguard/github-stats
       - name: Print repo stats
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           COLLECTION_PATH: ./events_collection.json
           REPO: ${{ github.event.inputs.repo }}
           SINCE: ${{ github.event.inputs.since }}
-        run: >
-          ./bin/github-stats.js
+        run: github-stats
