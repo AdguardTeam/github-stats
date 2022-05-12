@@ -1,0 +1,24 @@
+{
+    "name": "@adguard/github-stats",
+    "version": "1.0.0",
+    "author": "AdGuard",
+    "license": "MIT",
+    "bin": {
+        "github-poll": "./bin/github-poll.js",
+        "github-stats": "./bin/github-stats.js"
+    },
+    "scripts": {
+        "lint": "eslint ."
+    },
+    "dependencies": {
+        "@octokit/core": "^3.6.0",
+        "dotenv": "^16.0.0",
+        "fs-extra": "^10.1.0",
+        "lodash": "^4.17.21"
+    },
+    "devDependencies": {
+        "eslint": "^8.13.0",
+        "eslint-config-airbnb-base": "^15.0.0",
+        "eslint-plugin-import": "^2.26.0"
+    }
+}
