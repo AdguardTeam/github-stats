@@ -1,5 +1,5 @@
 {
-    "name": "github-stats",
+    "name": "@adguard/github-stats",
     "version": "1.0.0",
     "author": "AdGuard",
     "license": "MIT",
