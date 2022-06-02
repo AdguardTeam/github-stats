@@ -15,7 +15,8 @@
         "dotenv": "^16.0.0",
         "fs-extra": "^10.1.0",
         "stream-chain": "^2.2.5",
-        "stream-json": "^1.7.4"
+        "stream-json": "^1.7.4",
+        "stream-to-array": "^2.3.0"
     },
     "devDependencies": {
         "eslint": "^8.13.0",

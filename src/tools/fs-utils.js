@@ -1,43 +1,30 @@
-const {
-    readFile,
-    createWriteStream,
-    createReadStream,
-} = require('fs-extra');
+const { createWriteStream, createReadStream } = require('fs-extra');
 const { Readable } = require('stream');
 const { chain } = require('stream-chain');
 const { parser } = require('stream-json/jsonl/Parser');
 const Stringer = require('stream-json/jsonl/Stringer');
-const { isOldEvent } = require('./events-utils');
+const toArray = require('stream-to-array');
+const { isOldEvent, isCreatedSince } = require('./events-utils');
 
 /**
- * Gets array of GitHub event objects from file
+ * Gets array of GitHub event objects from file and by search time
  * @param {string} path path to the file to read from
+ * @param {string} searchTime timestamp in ISO 8601 format: YYYY-MM-DDTHH:MM:SS
  * @return {Promise<Array<Object>>} array with GitHub event objects
  */
-const getEventsFromCollection = async (path) => {
-    let collection;
-    try {
-        const file = await readFile(path, 'utf8');
-        if (file.length === 0) {
-            collection = [];
-        } else {
-            collection = JSON.parse(file);
-        }
-    } catch {
-        collection = [];
-    }
+const getEventsFromCollection = async (path, searchTime) => {
+    const eventsChain = chain([
+        createReadStream(path),
+        parser(),
+        (data) => {
+            const event = data.value;
+            return isCreatedSince(event, searchTime) ? event : null;
+        },
+    ]);
 
-    return collection;
+    const eventsBySearchDate = await toArray(eventsChain);
+    return eventsBySearchDate;
 };
-
-// /**
-//  * Writes event objects from array to path, path is created if there is none
-//  * @param {Array.<Object>} events array with GitHub event objects
-//  */
-// const writeEventsToCollection = async (path, events) => {
-//     await ensureFile(path);
-//     await writeFile(path, JSON.stringify(events));
-// };
 
 /**
  * Writes event objects from array to path as a stream, path is created if there is none
@@ -50,7 +37,7 @@ const writeEventsToCollection = async (path, events) => {
         read: () => { },
     });
 
-    const pushToChain = () => {
+    const pushToStream = () => {
         events.forEach((event) => {
             readable.push(`${JSON.stringify(event)}\n`);
         });
@@ -60,7 +47,7 @@ const writeEventsToCollection = async (path, events) => {
         flags: 'a',
     }));
 
-    pushToChain();
+    pushToStream();
 };
 
 /**
