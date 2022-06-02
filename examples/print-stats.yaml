@@ -27,7 +27,7 @@ jobs:
       - name: Print repo stats
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          COLLECTION_PATH: ./events_collection.json
+          COLLECTION_PATH: ./events_collection.jsonl
           REPO: ${{ github.event.inputs.repo }}
           SINCE: ${{ github.event.inputs.since }}
         run: github-stats

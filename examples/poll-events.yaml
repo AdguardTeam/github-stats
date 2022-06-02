@@ -20,7 +20,7 @@ jobs:
       - name: Poll Github events
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          COLLECTION_PATH: ./events_collection.json
+          COLLECTION_PATH: ./events_collection.jsonl
           REPO: AdguardTeam/AdguardFilters
         run: github-poll
       - name: commit artifacts
