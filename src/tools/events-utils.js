@@ -6,19 +6,17 @@ const {
 } = require('../constants');
 
 /**
- * Removes events that are older than specified date
- * @param {Array.<Object>} events array with GitHub event objects
+ * Determines if event counts as old
+ * @param {Object} event
  * @param {number} expirationDays number of days representing events lifespan
- * @return {Array.<Object>} array with GitHub event objects
+ * @return {boolean} array with GitHub event objects
  */
-const removeOldEvents = (events, expirationDays) => {
+const isOldEvent = (event, expirationDays) => {
     const expirationTime = expirationDays * MILLISECONDS_IN_DAY;
+    const createdAt = event.created_at;
+    const createdTime = new Date(createdAt).getTime();
 
-    return events.filter((event) => {
-        const createdAt = event.created_at;
-        const createdTime = new Date(createdAt).getTime();
-        return Date.now() - createdTime <= expirationTime;
-    });
+    return Date.now() - createdTime > expirationTime;
 };
 
 /**
@@ -199,7 +197,7 @@ const getActivityAuthor = (event) => {
 };
 
 module.exports = {
-    removeOldEvents,
+    isOldEvent,
     isOpenedAction,
     isClosedAction,
     isStale,

@@ -14,7 +14,8 @@
         "@octokit/core": "^3.6.0",
         "dotenv": "^16.0.0",
         "fs-extra": "^10.1.0",
-        "lodash": "^4.17.21"
+        "stream-chain": "^2.2.5",
+        "stream-json": "^1.7.4"
     },
     "devDependencies": {
         "eslint": "^8.13.0",
