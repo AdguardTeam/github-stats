@@ -71,7 +71,7 @@ const isCreatedSince = (event, searchTime) => {
     const searchTimeNum = Number(new Date(searchTime));
     const createTimeNum = Number(new Date(createdAt));
 
-    return searchTimeNum < createTimeNum;
+    return searchTimeNum <= createTimeNum;
 };
 
 /**

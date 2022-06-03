@@ -3,7 +3,7 @@ const { Readable } = require('stream');
 const { chain } = require('stream-chain');
 const { parser } = require('stream-json/jsonl/Parser');
 const Stringer = require('stream-json/jsonl/Stringer');
-const toArray = require('stream-to-array');
+const { streamToArray } = require('./stream-utils');
 const { isOldEvent, isCreatedSince } = require('./events-utils');
 
 /**
@@ -18,11 +18,12 @@ const getEventsFromCollection = async (path, searchTime) => {
         parser(),
         (data) => {
             const event = data.value;
-            return isCreatedSince(event, searchTime) ? event : null;
+            return isCreatedSince(event, searchTime) ? event : 'stop';
         },
     ]);
 
-    const eventsBySearchDate = await toArray(eventsChain);
+    const eventsBySearchDate = await streamToArray(eventsChain);
+
     return eventsBySearchDate;
 };
 
