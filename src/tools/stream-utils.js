@@ -42,8 +42,15 @@ const streamToArray = function (stream, done) {
             }
 
             function onEnd(err) {
-                if (err) reject(err);
-                else resolve(resultArray);
+                if (err) {
+                    reject(err);
+                }
+                if (resultArray.length === 0) {
+                    // Return null if stream (file) was empty
+                    resolve(null);
+                } else {
+                    resolve(resultArray);
+                }
                 cleanup();
             }
 
