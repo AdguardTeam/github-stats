@@ -6,7 +6,7 @@
  * @param {callback} done
  * @return {Array} array with event objects
  */
-const streamToArray = function (stream, done) {
+const streamToArray = function (stream) {
     if (!stream) {
         return;
     }
@@ -24,7 +24,6 @@ const streamToArray = function (stream, done) {
             let resultArray = [];
 
             function cleanup() {
-                resultArray = null;
                 stream.removeListener('data', onData);
                 stream.removeListener('end', onEnd);
                 stream.removeListener('error', onEnd);
@@ -63,14 +62,6 @@ const streamToArray = function (stream, done) {
             stream.on('error', onEnd);
             stream.on('close', onClose);
         });
-    }
-
-    if (typeof done === 'function') {
-        deferred.then((resultArray) => {
-            process.nextTick(() => {
-                done(null, resultArray);
-            });
-        }, done);
     }
 
     return deferred;
