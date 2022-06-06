@@ -1,5 +1,4 @@
 /* eslint-disable no-param-reassign, no-use-before-define, func-names, consistent-return */
-const Promise = require('any-promise');
 
 /**
  * Gets array of GitHub event objects from file and by search time
@@ -19,7 +18,7 @@ const streamToArray = function (stream, done) {
         deferred = new Promise((resolve, reject) => {
             // stream is already ended
             if (!stream.readable) {
-                return resolve([]);
+                resolve([]);
             }
 
             let resultArray = [];
@@ -42,8 +41,15 @@ const streamToArray = function (stream, done) {
             }
 
             function onEnd(err) {
-                if (err) reject(err);
-                else resolve(resultArray);
+                if (err) {
+                    reject(err);
+                }
+                if (resultArray.length === 0) {
+                    // Return null if stream (file) was empty
+                    resolve(null);
+                } else {
+                    resolve(resultArray);
+                }
                 cleanup();
             }
 
