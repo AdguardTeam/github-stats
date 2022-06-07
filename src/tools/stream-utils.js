@@ -3,7 +3,6 @@
 /**
  * Gets array of GitHub event objects from file and by search time
  * @param {Object} stream
- * @param {callback} done
  * @return {Promise<Array<Object>>} array with event objects
  */
 const streamToArray = function (stream) {
