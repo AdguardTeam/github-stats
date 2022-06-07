@@ -8,7 +8,7 @@ const {
 const { Readable } = require('stream');
 const { chain } = require('stream-chain');
 const { parser } = require('stream-json/jsonl/Parser');
-const { streamToArray } = require('./stream-utils');
+const { streamToArray, getUniquesFromStream } = require('./stream-utils');
 const { isOldEvent, isCreatedSince } = require('./events-utils');
 
 /**
@@ -29,7 +29,7 @@ const getEventsFromCollection = async (path, searchTime) => {
 
     const eventsBySearchDate = await streamToArray(eventsChain);
 
-    return eventsBySearchDate;
+    return eventsBySearchDate || [];
 };
 
 /**
@@ -76,35 +76,11 @@ const getUniquesFromPoll = async (path, events) => {
     const fileEventsStream = createReadStream(path, {
         flags: 'r',
     });
+    const collectionStream = fileEventsStream.pipe(parser());
 
-    const eventsChain = chain([
-        fileEventsStream,
-        parser(),
-        // eslint-disable-next-line consistent-return
-        (data) => {
-            const eventFromFile = data.value;
-            const dupeIndex = events.findIndex((newEvent) => {
-                return newEvent.id === eventFromFile.id;
-            });
-            // Collect duplicate events
-            if (dupeIndex !== -1) {
-                return events[dupeIndex];
-            }
-        },
-    ]);
-    const dupeEvents = await streamToArray(eventsChain);
-    // Forward events if collection was empty
-    if (dupeEvents === null) {
-        return events;
-    }
+    const newUniqueEvents = await getUniquesFromStream(collectionStream, events);
 
-    const dupeIds = dupeEvents.map((event) => event.id);
-    // Deep copy of events array
-    const newEvents = JSON.parse(JSON.stringify(events));
-    // Get events which has ids that are not present in dupeIds array
-    const newUniqueEvents = newEvents.filter((event) => dupeIds.indexOf(event.id) === -1);
-
-    return newUniqueEvents;
+    return newUniqueEvents || [];
 };
 
 /**

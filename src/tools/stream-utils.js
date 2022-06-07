@@ -66,6 +66,51 @@ const streamToArray = function (stream) {
     return deferred;
 };
 
+const getUniquesFromStream = function (stream, array) {
+    return new Promise((resolve, reject) => {
+        // stream is already ended
+        if (!stream.readable) {
+            resolve([]);
+        }
+
+        const resultArray = JSON.parse(JSON.stringify(array));
+
+        function onData(data) {
+            const eventFromFile = data.value;
+            const dupeIndex = resultArray.findIndex((newEvent) => {
+                return newEvent.id === eventFromFile.id;
+            });
+            if (dupeIndex !== -1) {
+                resultArray.splice(dupeIndex, 1);
+            }
+        }
+
+        function onEnd(err) {
+            if (err) {
+                reject(err);
+            }
+            if (resultArray.length === 0) {
+                // Return null if stream (file) was empty
+                resolve(null);
+            } else {
+                resolve(resultArray);
+            }
+            cleanup();
+        }
+
+        function cleanup() {
+            stream.removeListener('data', onData);
+            stream.removeListener('end', onEnd);
+            stream.removeListener('error', onEnd);
+        }
+
+        stream.on('data', onData);
+        stream.on('end', onEnd);
+        stream.on('error', onEnd);
+    });
+};
+
 module.exports = {
     streamToArray,
+    getUniquesFromStream,
 };
