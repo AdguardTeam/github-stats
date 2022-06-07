@@ -1,82 +1,33 @@
-/* eslint-disable no-param-reassign, no-use-before-define, func-names, consistent-return */
+/* eslint-disable no-use-before-define */
 
 /**
- * Gets array of GitHub event objects from file and by search time
+ * Reduces stream to an array, applying callback to each chunk
  * @param {Object} stream
+ * @param {callback} cb required, return null to stop the stream
+ * @param {Array} initArray optional, defaults to empty array
  * @return {Promise<Array<Object>>} array with event objects
  */
-const streamToArray = function (stream) {
+const reduceStream = (stream, cb, initArray = []) => {
     if (!stream) {
         return;
     }
+    const resultArray = [...initArray];
+    // Bind callback to the local accum array
+    const processChunk = (data) => {
+        return cb(data, resultArray);
+    };
 
-    let deferred;
-    if (!stream.readable) {
-        deferred = Promise.resolve([]);
-    } else {
-        deferred = new Promise((resolve, reject) => {
-            // stream is already ended
-            if (!stream.readable) {
-                resolve([]);
-            }
-
-            const resultArray = [];
-
-            function cleanup() {
-                stream.removeListener('data', onData);
-                stream.removeListener('end', onEnd);
-                stream.removeListener('error', onEnd);
-                stream.removeListener('close', onClose);
-            }
-
-            function onData(data) {
-                if (data === 'stop') {
-                    // Stop stream to avoid excessive stream reading
-                    stream.destroy();
-                } else {
-                    resultArray.push(data);
-                }
-            }
-
-            function onEnd(err) {
-                if (err) {
-                    reject(err);
-                }
-                resolve(resultArray);
-                cleanup();
-            }
-
-            function onClose() {
-                resolve(resultArray);
-                cleanup();
-            }
-
-            stream.on('data', onData);
-            stream.on('end', onEnd);
-            stream.on('error', onEnd);
-            stream.on('close', onClose);
-        });
-    }
-
-    return deferred;
-};
-
-const getUniquesFromStream = function (stream, poll) {
+    // eslint-disable-next-line consistent-return
     return new Promise((resolve, reject) => {
-        // stream is already ended
+        // stream has already ended
         if (!stream.readable) {
             resolve([]);
         }
 
-        const resultArray = [...poll];
-
         function onData(data) {
-            const eventFromFile = data.value;
-            const dupeIndex = resultArray.findIndex((newEvent) => {
-                return newEvent.id === eventFromFile.id;
-            });
-            if (dupeIndex !== -1) {
-                resultArray.splice(dupeIndex, 1);
+            const next = processChunk(data);
+            if (next === null) {
+                stream.destroy();
             }
         }
 
@@ -88,19 +39,25 @@ const getUniquesFromStream = function (stream, poll) {
             cleanup();
         }
 
+        function onClose() {
+            resolve(resultArray);
+            cleanup();
+        }
+
         function cleanup() {
             stream.removeListener('data', onData);
             stream.removeListener('end', onEnd);
             stream.removeListener('error', onEnd);
+            stream.removeListener('close', onClose);
         }
 
         stream.on('data', onData);
         stream.on('end', onEnd);
         stream.on('error', onEnd);
+        stream.on('close', onClose);
     });
 };
 
 module.exports = {
-    streamToArray,
-    getUniquesFromStream,
+    reduceStream,
 };

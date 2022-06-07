@@ -8,7 +8,7 @@ const {
 const { Readable } = require('stream');
 const { chain } = require('stream-chain');
 const { parser } = require('stream-json/jsonl/Parser');
-const { streamToArray, getUniquesFromStream } = require('./stream-utils');
+const { reduceStream } = require('./stream-utils');
 const { isOldEvent, isCreatedSince } = require('./events-utils');
 
 /**
@@ -18,16 +18,18 @@ const { isOldEvent, isCreatedSince } = require('./events-utils');
  * @return {Promise<Array<Object>>} array with GitHub event objects
  */
 const getEventsFromCollection = async (path, searchTime) => {
-    const eventsChain = chain([
-        createReadStream(path),
-        parser(),
-        (data) => {
-            const event = data.value;
-            return isCreatedSince(event, searchTime) ? event : 'stop';
-        },
-    ]);
+    const fileEventsStream = createReadStream(path, {
+        flags: 'r',
+    });
+    const collectionStream = fileEventsStream.pipe(parser());
 
-    const eventsBySearchDate = await streamToArray(eventsChain);
+    const callback = (data, accArray) => {
+        // Remove parser() wrapping
+        const event = data.value;
+        return isCreatedSince(event, searchTime) ? accArray.push(event) : null;
+    };
+
+    const eventsBySearchDate = await reduceStream(collectionStream, callback);
 
     return eventsBySearchDate;
 };
@@ -78,7 +80,17 @@ const getUniquesFromPoll = async (path, events) => {
     });
     const collectionStream = fileEventsStream.pipe(parser());
 
-    const newUniqueEvents = await getUniquesFromStream(collectionStream, events);
+    const filteringCallback = (data, accArray) => {
+        // Remove parser() wrapping
+        const eventFromFile = data.value;
+        const dupeIndex = accArray.findIndex((newEvent) => {
+            return newEvent.id === eventFromFile.id;
+        });
+        if (dupeIndex !== -1) {
+            accArray.splice(dupeIndex, 1);
+        }
+    };
+    const newUniqueEvents = await reduceStream(collectionStream, filteringCallback, events);
 
     return newUniqueEvents;
 };
