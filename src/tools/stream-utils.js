@@ -42,12 +42,7 @@ const streamToArray = function (stream) {
                 if (err) {
                     reject(err);
                 }
-                if (resultArray.length === 0) {
-                    // Return null if stream (file) was empty
-                    resolve(null);
-                } else {
-                    resolve(resultArray);
-                }
+                resolve(resultArray);
                 cleanup();
             }
 
@@ -89,12 +84,7 @@ const getUniquesFromStream = function (stream, array) {
             if (err) {
                 reject(err);
             }
-            if (resultArray.length === 0) {
-                // Return null if stream (file) was empty
-                resolve(null);
-            } else {
-                resolve(resultArray);
-            }
+            resolve(resultArray);
             cleanup();
         }
 

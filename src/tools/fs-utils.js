@@ -29,7 +29,7 @@ const getEventsFromCollection = async (path, searchTime) => {
 
     const eventsBySearchDate = await streamToArray(eventsChain);
 
-    return eventsBySearchDate || [];
+    return eventsBySearchDate;
 };
 
 /**
@@ -80,7 +80,7 @@ const getUniquesFromPoll = async (path, events) => {
 
     const newUniqueEvents = await getUniquesFromStream(collectionStream, events);
 
-    return newUniqueEvents || [];
+    return newUniqueEvents;
 };
 
 /**
