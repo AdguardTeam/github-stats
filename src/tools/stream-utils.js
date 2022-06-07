@@ -4,7 +4,7 @@
  * Gets array of GitHub event objects from file and by search time
  * @param {Object} stream
  * @param {callback} done
- * @return {Array} array with event objects
+ * @return {Promise<Array<Object>>} array with event objects
  */
 const streamToArray = function (stream) {
     if (!stream) {
@@ -21,7 +21,7 @@ const streamToArray = function (stream) {
                 resolve([]);
             }
 
-            let resultArray = [];
+            const resultArray = [];
 
             function cleanup() {
                 stream.removeListener('data', onData);
