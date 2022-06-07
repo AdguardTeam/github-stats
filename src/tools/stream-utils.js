@@ -61,14 +61,14 @@ const streamToArray = function (stream) {
     return deferred;
 };
 
-const getUniquesFromStream = function (stream, array) {
+const getUniquesFromStream = function (stream, poll) {
     return new Promise((resolve, reject) => {
         // stream is already ended
         if (!stream.readable) {
             resolve([]);
         }
 
-        const resultArray = JSON.parse(JSON.stringify(array));
+        const resultArray = [...poll];
 
         function onData(data) {
             const eventFromFile = data.value;
