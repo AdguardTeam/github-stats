@@ -1,7 +1,7 @@
 const { prepareGeneralRepoStats } = require('./general-repo-stat');
 const { prepareContributorStat } = require('./contributor-stat');
 const { getEventsFromCollection } = require('../tools/fs-utils');
-const { isCreatedSince, countEventsByType, sortEventsByHour } = require('../tools/events-utils');
+const { countEventsByType, sortEventsByHour } = require('../tools/events-utils');
 const { EVENT_TYPES } = require('../constants');
 
 /**
@@ -13,8 +13,7 @@ const { EVENT_TYPES } = require('../constants');
  * @return {Object}
  */
 const prepareStats = async (collectionPath, commonRequestData, searchTime) => {
-    const collection = await getEventsFromCollection(collectionPath);
-    const eventsBySearchDate = collection.filter((event) => isCreatedSince(event, searchTime));
+    const eventsBySearchDate = await getEventsFromCollection(collectionPath, searchTime);
 
     const generalRepoStats = await prepareGeneralRepoStats(eventsBySearchDate, commonRequestData);
     const contributors = prepareContributorStat(eventsBySearchDate);

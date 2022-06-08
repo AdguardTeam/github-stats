@@ -1,8 +1,10 @@
-const { unionBy } = require('lodash/array');
-const { removeOldEvents } = require('./tools/events-utils');
 const { getGithubEvents } = require('./tools/gh-utils');
 const { EVENT_EXPIRATION_DAYS } = require('./constants');
-const { getEventsFromCollection, writeEventsToCollection } = require('./tools/fs-utils');
+const {
+    writeEventsToCollection,
+    getUniquesFromPoll,
+    removeOldEventsFromCollection,
+} = require('./tools/fs-utils');
 
 /**
  * Polls events from Github Events API and stores them on a given path
@@ -11,12 +13,10 @@ const { getEventsFromCollection, writeEventsToCollection } = require('./tools/fs
  * @param {Object} commonRequestData
  */
 const pollEvents = async (collectionPath, commonRequestData) => {
-    const newEvents = await getGithubEvents(commonRequestData);
-    let collection = await getEventsFromCollection(collectionPath);
-    collection = removeOldEvents(collection, EVENT_EXPIRATION_DAYS);
-    // Merge polled events with storage and de-duplicate by id
-    const mergedEvents = unionBy(collection, newEvents, 'id');
-    await writeEventsToCollection(collectionPath, mergedEvents);
+    const newPoll = await getGithubEvents(commonRequestData);
+    const newEvents = await getUniquesFromPoll(collectionPath, newPoll);
+    await writeEventsToCollection(collectionPath, newEvents);
+    await removeOldEventsFromCollection(collectionPath, EVENT_EXPIRATION_DAYS);
 };
 
 exports.pollEvents = pollEvents;

@@ -14,5 +14,6 @@ const commonRequestData = {
 
 (async () => {
     const statistics = await prepareStats(COLLECTION_PATH, commonRequestData, SINCE);
+
     printStats(statistics);
 })();
