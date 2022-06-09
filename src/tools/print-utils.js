@@ -1,6 +1,15 @@
+const trimDateString = (string) => {
+    return string
+        .replace('T', ' ')
+        .replace('Z', '');
+};
+
 const makeGeneralRepoStatsString = (repoStats) => {
+    const since = trimDateString(repoStats.searchTime);
+    const until = trimDateString(new Date().toISOString());
     const statString = `
     ## General repo statistics \n
+    Repo statistics for the period from ${since} to ${until} \n
     * New issues: ${repoStats.newIssues}
     * Resolved issues: ${repoStats.resolvedIssues}
     * Closed as stale: ${repoStats.closedAsStaleIssues}
@@ -35,15 +44,14 @@ const makeGeneralActivityString = (generalActivity) => {
     return statString;
 };
 
-const makeHourlyActivityString = (hourlyContributorActivity) => {
-    const currentDate = new Date().toISOString().split('T')[0];
+const makeHourlyActivityString = (hourlyContributorActivity, date) => {
     const totalActivity = hourlyContributorActivity.reduce((prev, current) => prev + current, 0);
     if (totalActivity <= 0) {
         return '';
     }
     let hourlyStatString = `
-    *Daily activity*
-    *${currentDate}*\n
+    *Date*
+    *${date}*\n
     hour \t activity
     `.replace(/  +/g, '');
 
@@ -56,7 +64,17 @@ const makeHourlyActivityString = (hourlyContributorActivity) => {
     return hourlyStatString;
 };
 
-const makeDetailedActivityString = (detailedActivity, hourlyActivity) => {
+const makeActivityByTimeString = (contributorsActivityByTime) => {
+    let activityByTimeString = '\n*Daily activity*\n';
+    // eslint-disable-next-line no-restricted-syntax
+    for (const [date, activities] of Object.entries(contributorsActivityByTime)) {
+        activityByTimeString += makeHourlyActivityString(activities, date);
+    }
+
+    return activityByTimeString;
+};
+
+const makeDetailedActivityString = (detailedActivity, activityByTime) => {
     let statString = '\n## Detailed contributor statistics';
 
     // eslint-disable-next-line no-restricted-syntax
@@ -70,7 +88,7 @@ const makeDetailedActivityString = (detailedActivity, hourlyActivity) => {
         * Total comments: ${activities.totalComments}
         `.replace(/  +/g, '');
 
-        contributorString += makeHourlyActivityString(hourlyActivity[name]);
+        contributorString += makeActivityByTimeString(activityByTime[name]);
 
         statString += contributorString;
     }
