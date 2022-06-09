@@ -84,7 +84,6 @@ const getCommitsCount = (pushEvents) => {
     const commitsCount = pushEvents.reduce((acc, event) => {
         return acc + event.payload.commits.length;
     }, 0);
-
     return commitsCount;
 };
 

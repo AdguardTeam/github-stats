@@ -67,6 +67,7 @@ const makeDetailedActivityString = (detailedActivity, hourlyActivity) => {
         * New pull requests (merged): ${activities.newPulls} (${activities.mergedPulls})
         * Pull requests review activity: ${activities.pullRequestsReview}
         * Total commits: ${activities.totalCommits}
+        * Total comments: ${activities.totalComments}
         `.replace(/  +/g, '');
 
         contributorString += makeHourlyActivityString(hourlyActivity[name]);

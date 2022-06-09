@@ -35,6 +35,7 @@ const prepareStats = async (collectionPath, commonRequestData, searchTime) => {
             mergedPulls: countEventsByType(events, EVENT_TYPES.MERGED_PULL_EVENT),
             pullRequestsReview: countEventsByType(events, EVENT_TYPES.PULL_REQUEST_REVIEW_EVENT),
             totalCommits: countEventsByType(events, EVENT_TYPES.PUSH_EVENT),
+            totalComments: countEventsByType(events, EVENT_TYPES.ISSUE_COMMENT_EVENT),
         };
 
         // Skip users who don't have activity that is needed for detailed stats
