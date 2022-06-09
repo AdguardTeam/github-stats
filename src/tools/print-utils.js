@@ -48,8 +48,7 @@ const makeHourlyActivityString = (hourlyContributorActivity) => {
     `.replace(/  +/g, '');
 
     hourlyContributorActivity.forEach((activity, hour) => {
-        const percent = Math.floor((activity / totalActivity) * 100);
-        const bar = `|${'█'.repeat(percent)}`;
+        const bar = `|${'█'.repeat(activity)}`;
 
         hourlyStatString += `\n${hour} \t ${activity} \t ${bar}`;
     });
