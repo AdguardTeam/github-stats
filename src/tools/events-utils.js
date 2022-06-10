@@ -1,3 +1,4 @@
+const { format } = require('date-fns');
 const {
     MILLISECONDS_IN_DAY,
     EVENT_TYPES,
@@ -13,8 +14,7 @@ const {
  */
 const isOldEvent = (event, expirationDays) => {
     const expirationTime = expirationDays * MILLISECONDS_IN_DAY;
-    const createdAt = event.created_at;
-    const createdTime = new Date(createdAt).getTime();
+    const createdTime = new Date(event.created_at).getTime();
 
     return Date.now() - createdTime > expirationTime;
 };
@@ -154,9 +154,7 @@ const eventsToActivityByTime = (contributor) => {
     const sortedEvents = {};
     // Sort contributor's events by date
     allEvents.forEach((event) => {
-        const createdAt = event.created_at;
-        // Get create time as YYYY-MM-DD
-        const createTime = createdAt.split('T')[0];
+        const createTime = format(new Date(event.created_at), 'yyy-MM-dd');
         if (!sortedEvents[createTime]) {
             sortedEvents[createTime] = [];
         }
