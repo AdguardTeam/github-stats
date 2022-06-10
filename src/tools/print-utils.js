@@ -1,12 +1,8 @@
-const trimDateString = (string) => {
-    return string
-        .replace('T', ' ')
-        .replace('Z', '');
-};
+const { format } = require('date-fns');
 
 const makeGeneralRepoStatsString = (repoStats) => {
-    const since = trimDateString(repoStats.searchTime);
-    const until = trimDateString(new Date().toISOString());
+    const since = format(new Date(repoStats.searchTime), 'yyy-MM-dd HH-mm-ss');
+    const until = format(new Date(), 'yyy-MM-dd HH-mm-ss');
     const statString = `
     ## General repo statistics \n
     Repo statistics for the period from ${since} to ${until} \n
@@ -50,7 +46,7 @@ const makeHourlyActivityString = (hourlyContributorActivity, date) => {
         return '';
     }
     let hourlyStatString = `
-    *Date*
+    \n*Date*
     *${date}*\n
     hour \t activity
     `.replace(/  +/g, '');
@@ -65,7 +61,7 @@ const makeHourlyActivityString = (hourlyContributorActivity, date) => {
 };
 
 const makeActivityByTimeString = (contributorsActivityByTime) => {
-    let activityByTimeString = '\n*Daily activity*\n';
+    let activityByTimeString = '\n*Daily activity*';
     // eslint-disable-next-line no-restricted-syntax
     for (const [date, activities] of Object.entries(contributorsActivityByTime)) {
         activityByTimeString += makeHourlyActivityString(activities, date);
