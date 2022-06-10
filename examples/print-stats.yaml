@@ -10,7 +10,12 @@ on:
         default: 'AdguardTeam/AdguardFilters'
       since:
         description: 'Timestamp to search from'
-        required: true
+        required: false
+        type: string
+        default: '2022-05-01T00:00:00Z'
+      until:
+        description: 'Timestamp to search to'
+        required: false
         type: string
         default: '2022-05-01T00:00:00Z'
 
@@ -30,4 +35,5 @@ jobs:
           COLLECTION_PATH: ./events_collection.jsonl
           REPO: ${{ github.event.inputs.repo }}
           SINCE: ${{ github.event.inputs.since }}
+          UNTIL: ${{ github.event.inputs.until }}
         run: github-stats

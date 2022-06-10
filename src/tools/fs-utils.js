@@ -9,24 +9,40 @@ const { Readable } = require('stream');
 const { chain } = require('stream-chain');
 const { parser } = require('stream-json/jsonl/Parser');
 const { reduceStream } = require('./stream-utils');
-const { isOldEvent, isCreatedSince } = require('./events-utils');
+const {
+    isOldEvent,
+    isCreatedSince,
+    isCreatedUntil,
+} = require('./events-utils');
 
 /**
  * Gets array of GitHub event objects from file and by search time
  * @param {string} path path to the file to read from
- * @param {string} searchTime timestamp in ISO 8601 format: YYYY-MM-DDTHH:MM:SS
+ * @param {object} timePeriod
  * @return {Promise<Array<Object>>} array with GitHub event objects
  */
-const getEventsFromCollection = async (path, searchTime) => {
+const getEventsFromCollection = async (path, timePeriod) => {
+    const { until, since } = timePeriod;
     const fileEventsStream = createReadStream(path, {
         flags: 'r',
     });
     const collectionStream = fileEventsStream.pipe(parser());
 
+    // eslint-disable-next-line consistent-return
     const callback = (data, accArray) => {
         // Remove parser() wrapping
         const event = data.value;
-        return isCreatedSince(event, searchTime) ? accArray.push(event) : null;
+        const createdUntil = isCreatedUntil(event, until);
+        const createdSince = isCreatedSince(event, since);
+        if (!createdSince) {
+            // Stop stream on last accepted event (avoid reading through events that are too old)
+            return null;
+        } else if (!createdUntil) {
+            // Skip events that are too recent
+            return; // eslint-disable-line no-useless-return, consistent-return
+        } else {
+            accArray.push(event);
+        }
     };
 
     const eventsBySearchDate = await reduceStream(collectionStream, callback);

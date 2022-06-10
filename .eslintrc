@@ -11,7 +11,8 @@
                 "ignoreComments": false
             }
         ],
-        "arrow-body-style": "off"
+        "arrow-body-style": "off",
+        "no-else-return": "off"
     },
     "parserOptions": {
         "ecmaVersion": 2020

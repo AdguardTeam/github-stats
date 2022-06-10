@@ -12,11 +12,11 @@ const { EVENT_TYPES } = require('../constants');
  * @param {string} searchTime timestamp from which to get events
  * @return {Object}
  */
-const prepareStats = async (collectionPath, commonRequestData, searchTime) => {
-    const eventsBySearchDate = await getEventsFromCollection(collectionPath, searchTime);
+const prepareStats = async (collectionPath, commonRequestData, timePeriod) => {
+    const eventsBySearchDate = await getEventsFromCollection(collectionPath, timePeriod);
 
     // eslint-disable-next-line max-len
-    const generalRepoStats = await prepareGeneralRepoStats(eventsBySearchDate, commonRequestData, searchTime);
+    const generalRepoStats = await prepareGeneralRepoStats(eventsBySearchDate, commonRequestData, timePeriod);
     const contributors = prepareContributorStat(eventsBySearchDate);
 
     // Sort contributors events to get general activity

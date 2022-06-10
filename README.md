@@ -28,6 +28,7 @@ env \
     COLLECTION_PATH=events_collection.jsonl \
     GITHUB_TOKEN=token \
     REPO=AdguardTeam/AdguardFilters \
+    UNTIL=2022-05-25T15:00:00Z \
     SINCE=2022-05-01T00:00:00Z \
     github-stats
 ```
@@ -36,4 +37,5 @@ env \
 * `COLLECTION_PATH` — required, path to a jsonl file that stores events
 * `GITHUB_TOKEN` — optional, Github Personal Access Token. API rate is limited to 60 requests an hour if not provided.
 * `REPO` — required, path to a Github repository as `{owner}/{repo_name}`
+* `UNTIL` — optional, timestamp in ISO 8601 format: `YYYY-MM-DDTHH:MM:SS`. Defaults to now.
 * `SINCE` — optional, timestamp in ISO 8601 format: `YYYY-MM-DDTHH:MM:SS`. All stored events will be used if not provided.
