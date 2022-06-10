@@ -1,3 +1,4 @@
+const { format } = require('date-fns');
 const {
     MILLISECONDS_IN_DAY,
     EVENT_TYPES,
@@ -13,8 +14,7 @@ const {
  */
 const isOldEvent = (event, expirationDays) => {
     const expirationTime = expirationDays * MILLISECONDS_IN_DAY;
-    const createdAt = event.created_at;
-    const createdTime = new Date(createdAt).getTime();
+    const createdTime = new Date(event.created_at).getTime();
 
     return Date.now() - createdTime > expirationTime;
 };
@@ -84,7 +84,6 @@ const getCommitsCount = (pushEvents) => {
     const commitsCount = pushEvents.reduce((acc, event) => {
         return acc + event.payload.commits.length;
     }, 0);
-
     return commitsCount;
 };
 
@@ -124,38 +123,51 @@ const countEventsByType = (contributor, eventType) => {
 };
 
 /**
- * Filter events from 00:00 to current time and sort them by hour
- * @param {Object} contributor contributor events object
- * @return {Object}
+ * Modify events array so index reflects events create hour
+ * @param {Array} events
+ * @return {Array<Array<number>>} hourly activity array
  */
-const sortEventsByHour = (contributor) => {
-    const allEvents = Object.values(contributor.events);
-
-    const today = new Date().getDate();
-    const todayEvents = allEvents
-        .flat()
-        .filter((event) => {
-            const createdAt = event.created_at;
-            const createdDay = new Date(createdAt).getDate();
-            return createdDay === today;
-        });
-
+const sortEventsByHour = (events) => {
     const eventsByHour = [];
     for (let i = 0; i <= 23; i += 1) {
         eventsByHour[i] = [];
     }
 
     // Sort events by their creation hour
-    todayEvents.forEach((event) => {
+    events.forEach((event) => {
         const createdAt = event.created_at;
         const hour = new Date(createdAt).getHours();
         eventsByHour[hour].push(event);
     });
 
     // Modify events into activities by collapsing event subarrays into their length
-    const activityByHour = eventsByHour.map((hourEvents) => hourEvents.length);
+    return eventsByHour.map((hourEvents) => hourEvents.length);
+};
 
-    return activityByHour;
+/**
+ * Sort events of given contributor by YYYY-MM-DD date and then by hour
+ * @param {Object} contributor contributor events object
+ * @return {Object}
+ */
+const eventsToActivityByTime = (contributor) => {
+    const allEvents = Object.values(contributor.events).flat();
+    const sortedEvents = {};
+    // Sort contributor's events by date
+    allEvents.forEach((event) => {
+        const createTime = format(new Date(event.created_at), 'yyy-MM-dd');
+        if (!sortedEvents[createTime]) {
+            sortedEvents[createTime] = [];
+        }
+        sortedEvents[createTime].push(event);
+    });
+
+    // Sort daily arrays by hour
+    // eslint-disable-next-line no-restricted-syntax
+    for (const [name, events] of Object.entries(sortedEvents)) {
+        sortedEvents[name] = sortEventsByHour(events);
+    }
+
+    return sortedEvents;
 };
 
 /**
@@ -205,6 +217,6 @@ module.exports = {
     isCreatedSince,
     getCommitsCount,
     countEventsByType,
-    sortEventsByHour,
+    eventsToActivityByTime,
     getActivityAuthor,
 };

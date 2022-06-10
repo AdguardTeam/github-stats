@@ -1,6 +1,11 @@
+const { format } = require('date-fns');
+
 const makeGeneralRepoStatsString = (repoStats) => {
+    const since = format(new Date(repoStats.searchTime), 'yyy-MM-dd HH-mm-ss');
+    const until = format(new Date(), 'yyy-MM-dd HH-mm-ss');
     const statString = `
     ## General repo statistics \n
+    Repo statistics for the period from ${since} to ${until} \n
     * New issues: ${repoStats.newIssues}
     * Resolved issues: ${repoStats.resolvedIssues}
     * Closed as stale: ${repoStats.closedAsStaleIssues}
@@ -35,21 +40,19 @@ const makeGeneralActivityString = (generalActivity) => {
     return statString;
 };
 
-const makeHourlyActivityString = (hourlyContributorActivity) => {
-    const currentDate = new Date().toISOString().split('T')[0];
+const makeHourlyActivityString = (hourlyContributorActivity, date) => {
     const totalActivity = hourlyContributorActivity.reduce((prev, current) => prev + current, 0);
     if (totalActivity <= 0) {
         return '';
     }
     let hourlyStatString = `
-    *Daily activity*
-    *${currentDate}*\n
+    \n*Date*
+    *${date}*\n
     hour \t activity
     `.replace(/  +/g, '');
 
     hourlyContributorActivity.forEach((activity, hour) => {
-        const percent = Math.floor((activity / totalActivity) * 100);
-        const bar = `|${'█'.repeat(percent)}`;
+        const bar = `|${'█'.repeat(activity)}`;
 
         hourlyStatString += `\n${hour} \t ${activity} \t ${bar}`;
     });
@@ -57,7 +60,17 @@ const makeHourlyActivityString = (hourlyContributorActivity) => {
     return hourlyStatString;
 };
 
-const makeDetailedActivityString = (detailedActivity, hourlyActivity) => {
+const makeActivityByTimeString = (contributorsActivityByTime) => {
+    let activityByTimeString = '\n*Daily activity*';
+    // eslint-disable-next-line no-restricted-syntax
+    for (const [date, activities] of Object.entries(contributorsActivityByTime)) {
+        activityByTimeString += makeHourlyActivityString(activities, date);
+    }
+
+    return activityByTimeString;
+};
+
+const makeDetailedActivityString = (detailedActivity, activityByTime) => {
     let statString = '\n## Detailed contributor statistics';
 
     // eslint-disable-next-line no-restricted-syntax
@@ -68,9 +81,10 @@ const makeDetailedActivityString = (detailedActivity, hourlyActivity) => {
         * New pull requests (merged): ${activities.newPulls} (${activities.mergedPulls})
         * Pull requests review activity: ${activities.pullRequestsReview}
         * Total commits: ${activities.totalCommits}
+        * Total comments: ${activities.totalComments}
         `.replace(/  +/g, '');
 
-        contributorString += makeHourlyActivityString(hourlyActivity[name]);
+        contributorString += makeActivityByTimeString(activityByTime[name]);
 
         statString += contributorString;
     }

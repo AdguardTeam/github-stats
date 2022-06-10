@@ -11,13 +11,13 @@ const printStats = (statistics) => {
         generalRepoStats,
         generalContributorStats,
         detailedContributorStats,
-        hourlyContributorActivity,
+        contributorActivityByTime,
     } = statistics;
 
     const generalRepoStatsString = makeGeneralRepoStatsString(generalRepoStats);
     const generalActivityString = makeGeneralActivityString(generalContributorStats);
     // eslint-disable-next-line max-len
-    const detailedActivityString = makeDetailedActivityString(detailedContributorStats, hourlyContributorActivity);
+    const detailedActivityString = makeDetailedActivityString(detailedContributorStats, contributorActivityByTime);
 
     console.log(generalRepoStatsString);
     console.log(generalActivityString);

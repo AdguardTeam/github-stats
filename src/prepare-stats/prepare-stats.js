@@ -1,7 +1,7 @@
 const { prepareGeneralRepoStats } = require('./general-repo-stat');
 const { prepareContributorStat } = require('./contributor-stat');
 const { getEventsFromCollection } = require('../tools/fs-utils');
-const { countEventsByType, sortEventsByHour } = require('../tools/events-utils');
+const { countEventsByType, eventsToActivityByTime } = require('../tools/events-utils');
 const { EVENT_TYPES } = require('../constants');
 
 /**
@@ -15,7 +15,8 @@ const { EVENT_TYPES } = require('../constants');
 const prepareStats = async (collectionPath, commonRequestData, searchTime) => {
     const eventsBySearchDate = await getEventsFromCollection(collectionPath, searchTime);
 
-    const generalRepoStats = await prepareGeneralRepoStats(eventsBySearchDate, commonRequestData);
+    // eslint-disable-next-line max-len
+    const generalRepoStats = await prepareGeneralRepoStats(eventsBySearchDate, commonRequestData, searchTime);
     const contributors = prepareContributorStat(eventsBySearchDate);
 
     // Sort contributors events to get general activity
@@ -35,6 +36,7 @@ const prepareStats = async (collectionPath, commonRequestData, searchTime) => {
             mergedPulls: countEventsByType(events, EVENT_TYPES.MERGED_PULL_EVENT),
             pullRequestsReview: countEventsByType(events, EVENT_TYPES.PULL_REQUEST_REVIEW_EVENT),
             totalCommits: countEventsByType(events, EVENT_TYPES.PUSH_EVENT),
+            totalComments: countEventsByType(events, EVENT_TYPES.ISSUE_COMMENT_EVENT),
         };
 
         // Skip users who don't have activity that is needed for detailed stats
@@ -44,18 +46,18 @@ const prepareStats = async (collectionPath, commonRequestData, searchTime) => {
         }
     }
 
-    //  Sort contributors events to get hourly activity by contributor name
-    const hourlyContributorActivity = {};
+    // Sort events by date and then by hourly activity
+    const contributorActivityByTime = {};
     // eslint-disable-next-line no-restricted-syntax
     for (const [name, events] of Object.entries(contributors)) {
-        hourlyContributorActivity[name] = sortEventsByHour(events);
+        contributorActivityByTime[name] = eventsToActivityByTime(events);
     }
 
     return {
         generalRepoStats,
         generalContributorStats,
         detailedContributorStats,
-        hourlyContributorActivity,
+        contributorActivityByTime,
     };
 };
 
