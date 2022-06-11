@@ -8,13 +8,13 @@ const {
 const { EVENT_TYPES } = require('../constants');
 
 /**
- * Make general repo stats object from input events
+ * Prepare general repo stats
  *
  * @param {Array<Object>} events array of Github events objects
  * @param {Object} commonRequestData
  * @return {Object}
  */
-const prepareGeneralRepoStats = async (events, commonRequestData, timePeriod) => {
+const prepareRepoStat = async (events, commonRequestData, timePeriod) => {
     const issuesEvents = events.filter((e) => e.type === EVENT_TYPES.ISSUES_EVENT);
     const newIssueEvents = issuesEvents.filter((e) => isOpenedAction(e));
     const resolvedIssueEvents = issuesEvents
@@ -34,7 +34,7 @@ const prepareGeneralRepoStats = async (events, commonRequestData, timePeriod) =>
         return !issue.pull_request;
     });
 
-    const generalRepoStats = {
+    const generalStat = {
         timePeriod,
         newIssues: newIssueEvents.length,
         resolvedIssues: resolvedIssueEvents.length,
@@ -44,7 +44,7 @@ const prepareGeneralRepoStats = async (events, commonRequestData, timePeriod) =>
         remainingIssues: remainingIssues.length,
     };
 
-    return generalRepoStats;
+    return generalStat;
 };
 
-exports.prepareGeneralRepoStats = prepareGeneralRepoStats;
+exports.prepareRepoStat = prepareRepoStat;

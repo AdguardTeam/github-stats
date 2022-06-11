@@ -1,6 +1,6 @@
 const { format } = require('date-fns');
 
-const makeGeneralRepoStatsString = (repoStats) => {
+const repoStatToString = (repoStats) => {
     const { until, since } = repoStats.timePeriod;
     const statString = `
     ## General repo statistics \n
@@ -16,8 +16,8 @@ const makeGeneralRepoStatsString = (repoStats) => {
     return statString;
 };
 
-const makeGeneralActivityString = (generalActivity) => {
-    const statArray = Object.entries(generalActivity);
+const activityToString = (activityStat) => {
+    const statArray = Object.entries(activityStat);
 
     const sortedByActivity = statArray.sort((a, b) => {
         if (a[1] > b[1]) {
@@ -39,7 +39,7 @@ const makeGeneralActivityString = (generalActivity) => {
     return statString;
 };
 
-const makeHourlyActivityString = (hourlyContributorActivity, date) => {
+const hourlyActivityToString = (hourlyContributorActivity, date) => {
     const totalActivity = hourlyContributorActivity.reduce((prev, current) => prev + current, 0);
     if (totalActivity <= 0) {
         return '';
@@ -59,21 +59,21 @@ const makeHourlyActivityString = (hourlyContributorActivity, date) => {
     return hourlyStatString;
 };
 
-const makeActivityByTimeString = (contributorsActivityByTime) => {
+const activityByTimeToString = (activitiesByTime) => {
     let activityByTimeString = '\n*Daily activity*';
     // eslint-disable-next-line no-restricted-syntax
-    for (const [date, activities] of Object.entries(contributorsActivityByTime)) {
-        activityByTimeString += makeHourlyActivityString(activities, date);
+    for (const [date, activities] of Object.entries(activitiesByTime)) {
+        activityByTimeString += hourlyActivityToString(activities, date);
     }
 
     return activityByTimeString;
 };
 
-const makeDetailedActivityString = (detailedActivity, activityByTime) => {
+const detailedActivityToString = (activitiesByType, activitiesByTime) => {
     let statString = '\n## Detailed contributor statistics';
 
     // eslint-disable-next-line no-restricted-syntax
-    for (const [name, activities] of Object.entries(detailedActivity)) {
+    for (const [name, activities] of Object.entries(activitiesByType)) {
         let contributorString = `
         \n\n### ${name}\n
         * Resolved issues: ${activities.resolvedIssues}
@@ -83,7 +83,7 @@ const makeDetailedActivityString = (detailedActivity, activityByTime) => {
         * Total comments: ${activities.totalComments}
         `.replace(/  +/g, '');
 
-        contributorString += makeActivityByTimeString(activityByTime[name]);
+        contributorString += activityByTimeToString(activitiesByTime[name]);
 
         statString += contributorString;
     }
@@ -92,7 +92,7 @@ const makeDetailedActivityString = (detailedActivity, activityByTime) => {
 };
 
 module.exports = {
-    makeGeneralRepoStatsString,
-    makeGeneralActivityString,
-    makeDetailedActivityString,
+    repoStatToString,
+    activityToString,
+    detailedActivityToString,
 };

@@ -28,7 +28,6 @@ const getEventsFromCollection = async (path, timePeriod) => {
     });
     const collectionStream = fileEventsStream.pipe(parser());
 
-    // eslint-disable-next-line consistent-return
     const callback = (data, accArray) => {
         // Remove parser() wrapping
         const event = data.value;
@@ -39,6 +38,7 @@ const getEventsFromCollection = async (path, timePeriod) => {
         } else if (!createdSince) {
             return null;
         }
+        return undefined;
     };
 
     const eventsBySearchDate = await reduceStream(collectionStream, callback);

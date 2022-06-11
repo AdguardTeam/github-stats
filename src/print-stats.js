@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-const { makeGeneralRepoStatsString, makeGeneralActivityString, makeDetailedActivityString } = require('./tools/print-utils');
+const { repoStatToString, activityToString, detailedActivityToString } = require('./tools/print-utils');
 
 /**
  * Prepares statistics strings and prints them to console
@@ -8,16 +8,15 @@ const { makeGeneralRepoStatsString, makeGeneralActivityString, makeDetailedActiv
  */
 const printStats = (statistics) => {
     const {
-        generalRepoStats,
-        generalContributorStats,
-        detailedContributorStats,
-        contributorActivityByTime,
+        repoStat,
+        activityStat,
+        activitiesByType,
+        activitiesByTime,
     } = statistics;
 
-    const generalRepoStatsString = makeGeneralRepoStatsString(generalRepoStats);
-    const generalActivityString = makeGeneralActivityString(generalContributorStats);
-    // eslint-disable-next-line max-len
-    const detailedActivityString = makeDetailedActivityString(detailedContributorStats, contributorActivityByTime);
+    const generalRepoStatsString = repoStatToString(repoStat);
+    const generalActivityString = activityToString(activityStat);
+    const detailedActivityString = detailedActivityToString(activitiesByType, activitiesByTime);
 
     console.log(generalRepoStatsString);
     console.log(generalActivityString);
