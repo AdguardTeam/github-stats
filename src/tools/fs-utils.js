@@ -36,6 +36,7 @@ const getEventsFromCollection = async (path, timePeriod) => {
         if (createdSince && createdUntil) {
             accArray.push(event);
         } else if (!createdSince) {
+            // Return null to stop the stream
             return null;
         }
         return undefined;
