@@ -34,14 +34,10 @@ const getEventsFromCollection = async (path, timePeriod) => {
         const event = data.value;
         const createdUntil = isCreatedUntil(event, until);
         const createdSince = isCreatedSince(event, since);
-        if (!createdSince) {
-            // Stop stream on last accepted event (avoid reading through events that are too old)
-            return null;
-        } else if (!createdUntil) {
-            // Skip events that are too recent
-            return; // eslint-disable-line no-useless-return, consistent-return
-        } else {
+        if (createdSince && createdUntil) {
             accArray.push(event);
+        } else if (!createdSince) {
+            return null;
         }
     };
 
