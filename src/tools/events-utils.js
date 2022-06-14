@@ -57,7 +57,7 @@ const isMerged = (pull) => {
 };
 
 /**
- * Checks if GitHub object was created since time specified
+ * Checks if GitHub Event object was created since time specified
  *
  * @param {object} event GitHub API response object
  * @param {string} searchTime timestamp in ISO 8601 format: YYYY-MM-DDTHH:MM:SS
@@ -68,10 +68,28 @@ const isCreatedSince = (event, searchTime) => {
         return true;
     }
     const createdAt = event.created_at;
-    const searchTimeNum = Number(new Date(searchTime));
-    const createTimeNum = Number(new Date(createdAt));
+    const searchTimeNum = new Date(searchTime).getTime();
+    const createTimeNum = new Date(createdAt).getTime();
 
     return searchTimeNum <= createTimeNum;
+};
+
+/**
+ * Checks if GitHub Event object was created until time specified
+ *
+ * @param {object} event GitHub API response object
+ * @param {string} searchTime timestamp in ISO 8601 format: YYYY-MM-DDTHH:MM:SS
+ * @return {boolean}
+ */
+const isCreatedUntil = (event, searchTime) => {
+    if (!searchTime) {
+        return true;
+    }
+    const createdAt = event.created_at;
+    const searchTimeNum = new Date(searchTime).getTime();
+    const createTimeNum = new Date(createdAt).getTime();
+
+    return searchTimeNum >= createTimeNum;
 };
 
 /**
@@ -215,6 +233,7 @@ module.exports = {
     isStale,
     isMerged,
     isCreatedSince,
+    isCreatedUntil,
     getCommitsCount,
     countEventsByType,
     eventsToActivityByTime,

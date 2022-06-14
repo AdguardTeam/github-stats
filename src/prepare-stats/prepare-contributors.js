@@ -7,7 +7,7 @@ const { getActivityAuthor } = require('../tools/events-utils');
  * @param {Array<Object>} events array of Github events objects
  * @return {Object}
  */
-const prepareContributorStat = (events) => {
+const prepareContributors = (events) => {
     const contributors = events.reduce((acc, event) => {
         const contributorName = getActivityAuthor(event);
         // Events that don't count as activity are not saved anywhere
@@ -26,4 +26,4 @@ const prepareContributorStat = (events) => {
     return contributors;
 };
 
-exports.prepareContributorStat = prepareContributorStat;
+exports.prepareContributors = prepareContributors;
