@@ -17,7 +17,7 @@ on:
         description: 'Timestamp to search to'
         required: false
         type: string
-        default: '2022-05-01T00:00:00Z'
+        default: '2022-06-01T00:00:00Z'
 
 jobs:
   stats:
