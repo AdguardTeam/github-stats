@@ -124,11 +124,9 @@ const writePollToCollection = async (path, events) => {
     await ensureDir(path);
     const sortedPoll = sortEventsByDate(events);
 
-    // eslint-disable-next-line no-restricted-syntax
-    for (const date of Object.keys(sortedPoll)) {
-        // eslint-disable-next-line no-await-in-loop
-        await writeEventsToFile(`${path}/${date}.jsonl`, sortedPoll[date], 'a');
-    }
+    await Promise.all(Object.keys(sortedPoll).map((date) => {
+        return writeEventsToFile(`${path}/${date}.jsonl`, sortedPoll[date], 'a');
+    }));
 };
 
 /**
