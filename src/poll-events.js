@@ -1,9 +1,9 @@
 const { getGithubEvents } = require('./tools/gh-utils');
 const { EVENT_EXPIRATION_DAYS } = require('./constants');
 const {
-    writeEventsToCollection,
-    getUniquesFromPoll,
-    removeOldEventsFromCollection,
+    removeOldFilesFromCollection,
+    writePollToCollection,
+    removeDupesFromCollection,
 } = require('./tools/fs-utils');
 
 /**
@@ -14,9 +14,9 @@ const {
  */
 const pollEvents = async (collectionPath, commonRequestData) => {
     const newPoll = await getGithubEvents(commonRequestData);
-    const newEvents = await getUniquesFromPoll(collectionPath, newPoll);
-    await writeEventsToCollection(collectionPath, newEvents);
-    await removeOldEventsFromCollection(collectionPath, EVENT_EXPIRATION_DAYS);
+    await writePollToCollection(collectionPath, newPoll);
+    await removeOldFilesFromCollection(collectionPath, EVENT_EXPIRATION_DAYS);
+    await removeDupesFromCollection(collectionPath);
 };
 
 exports.pollEvents = pollEvents;

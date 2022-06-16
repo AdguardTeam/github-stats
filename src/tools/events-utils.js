@@ -141,6 +141,24 @@ const countEventsByType = (contributor, eventType) => {
 };
 
 /**
+ * Sort events by date of creation
+ * @param {Array<Object>} events
+ * @return {Object<Array<Object>>}
+ */
+const sortEventsByDate = (events) => {
+    const sortedEvents = {};
+    events.forEach((event) => {
+        const createTime = format(new Date(event.created_at), 'yyy-MM-dd');
+        if (!sortedEvents[createTime]) {
+            sortedEvents[createTime] = [];
+        }
+        sortedEvents[createTime].push(event);
+    });
+
+    return sortedEvents;
+};
+
+/**
  * Modify events array so index reflects events create hour
  * @param {Array} events
  * @return {Array<Array<number>>} hourly activity array
@@ -237,5 +255,6 @@ module.exports = {
     getCommitsCount,
     countEventsByType,
     eventsToActivityByTime,
+    sortEventsByDate,
     getActivityAuthor,
 };

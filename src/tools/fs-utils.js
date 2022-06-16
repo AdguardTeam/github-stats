@@ -3,17 +3,20 @@ const {
     createReadStream,
     pathExists,
     remove,
-    rename,
+    readdir,
+    ensureDir,
 } = require('fs-extra');
+const { format, endOfYesterday } = require('date-fns');
 const { Readable } = require('stream');
 const { chain } = require('stream-chain');
 const { parser } = require('stream-json/jsonl/Parser');
 const { reduceStream } = require('./stream-utils');
 const {
-    isOldEvent,
     isCreatedSince,
     isCreatedUntil,
+    sortEventsByDate,
 } = require('./events-utils');
+const { MILLISECONDS_IN_DAY } = require('../constants');
 
 /**
  * Gets array of GitHub event objects from file and by search time
@@ -51,8 +54,9 @@ const getEventsFromCollection = async (path, timePeriod) => {
  * Writes events from array to path as a stream, path is created if there is none
  * @param {string} path path to a collection
  * @param {Array.<Object>} events array with GitHub event objects
+ * @param {string} flag node flag for write stream
  */
-const writeEventsToCollection = async (path, events) => {
+const writeEventsToFile = async (path, events, flag) => {
     if (events.length === 0) {
         return;
     }
@@ -66,7 +70,7 @@ const writeEventsToCollection = async (path, events) => {
         readable,
         (event) => `${JSON.stringify(event)}\n`,
         createWriteStream(path, {
-            flags: 'a',
+            flags: flag,
         }),
     ]);
 
@@ -76,64 +80,93 @@ const writeEventsToCollection = async (path, events) => {
 };
 
 /**
- * Gets events from an array that are not present in a collection
+ * Sort events by date of creation and write them to a corresponding file
  * @param {string} path path to a collection
- * @param {Array.<Object>} events array with GitHub event objects
- * @return {Promise<Array<Object>>} array with new unique events
+ * @param {Array<Object>} events array with GitHub event objects
  */
-const getUniquesFromPoll = async (path, events) => {
-    // Forward events if there is no collection yet
-    const hasCollection = await pathExists(path);
-    if (!hasCollection) {
-        return events;
+const writePollToCollection = async (path, events) => {
+    await ensureDir(path);
+    const sortedPoll = sortEventsByDate(events);
+
+    // eslint-disable-next-line no-restricted-syntax
+    for (const date of Object.keys(sortedPoll)) {
+        // eslint-disable-next-line no-await-in-loop
+        await writeEventsToFile(`${path}/${date}.jsonl`, sortedPoll[date], 'a');
+    }
+};
+
+/**
+ * Remove duplicate events from a file
+ * @param {string} path path to a file
+ */
+const removeDupesFromFile = async (path) => {
+    const hasFile = await pathExists(path);
+    if (!hasFile) {
+        return;
     }
 
     const fileEventsStream = createReadStream(path, {
         flags: 'r',
     });
-    const collectionStream = fileEventsStream.pipe(parser());
+    const fileStream = fileEventsStream.pipe(parser());
 
-    const filteringCallback = (data, accArray) => {
-        // Remove parser() wrapping
-        const eventFromFile = data.value;
-        const dupeIndex = accArray.findIndex((newEvent) => {
-            return newEvent.id === eventFromFile.id;
+    const callback = (data, accArray) => accArray.push(data.value);
+    const fileArray = await reduceStream(fileStream, callback);
+
+    const dedupedArray = [];
+    fileArray.forEach((event) => {
+        const dupeIndex = dedupedArray.findIndex((e) => {
+            return e.id === event.id;
         });
-        if (dupeIndex !== -1) {
-            accArray.splice(dupeIndex, 1);
+        if (dupeIndex === -1) {
+            dedupedArray.push(event);
         }
-    };
-    const newUniqueEvents = await reduceStream(collectionStream, filteringCallback, events);
+    });
 
-    return newUniqueEvents;
+    await writeEventsToFile(path, dedupedArray, 'w');
 };
 
 /**
- * Removes events that are older than specified date from collection
+ * Remove duplicate events from collection
+ * @param {string} path path to a collection
+ */
+const removeDupesFromCollection = async (path) => {
+    const hasCollection = await pathExists(path);
+    if (!hasCollection) {
+        return;
+    }
+
+    const currentDate = format(new Date(), 'yyy-MM-dd');
+    const previousDate = format(endOfYesterday(), 'yyy-MM-dd');
+
+    await removeDupesFromFile(`${path}/${currentDate}.jsonl`);
+    await removeDupesFromFile(`${path}/${previousDate}.jsonl`);
+};
+
+/**
+ * Deletes files that are older than specified
  * @param {string} path path to a collection
  * @param {number} expirationDays number of days representing events lifespan
  */
-const removeOldEventsFromCollection = async (path, expirationDays) => {
-    const TEMP_COLLECTION_NAME = 'temp.jsonl';
+const removeOldFilesFromCollection = async (path, expirationDays) => {
+    const filenames = await readdir(path);
+    const expirationTime = expirationDays * MILLISECONDS_IN_DAY;
 
-    chain([
-        createReadStream(path),
-        parser(),
-        (data) => {
-            const event = data.value;
-            return isOldEvent(event, expirationDays) ? null : event;
-        },
-        (event) => `${JSON.stringify(event)}\n`,
-        createWriteStream(TEMP_COLLECTION_NAME),
-    ]);
+    const oldFilenames = filenames.filter((filename) => {
+        const date = filename.split('.')[0];
+        const daysOld = new Date(date).getTime();
+        return Date.now() - daysOld > expirationTime;
+    });
 
-    await remove(path);
-    rename(TEMP_COLLECTION_NAME, path);
+    oldFilenames.forEach(async (filename) => {
+        // eslint-disable-next-line no-await-in-loop
+        await remove(`${path}/${filename}`);
+    });
 };
 
 module.exports = {
     getEventsFromCollection,
-    writeEventsToCollection,
-    getUniquesFromPoll,
-    removeOldEventsFromCollection,
+    writePollToCollection,
+    removeDupesFromCollection,
+    removeOldFilesFromCollection,
 };

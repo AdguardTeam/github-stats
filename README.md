@@ -16,7 +16,7 @@ npm i -g @adguard/github-stats
 
 ```
 env \
-    COLLECTION_PATH=events_collection.jsonl \
+    COLLECTION_PATH=stats-data \
     GITHUB_TOKEN=token \
     REPO=AdguardTeam/AdguardFilters \
     github-poll
