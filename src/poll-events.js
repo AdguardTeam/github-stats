@@ -15,8 +15,8 @@ const {
 const pollEvents = async (collectionPath, commonRequestData) => {
     const newPoll = await getGithubEvents(commonRequestData);
     await writePollToCollection(collectionPath, newPoll);
-    await removeOldFilesFromCollection(collectionPath, EVENT_EXPIRATION_DAYS);
     await removeDupesFromCollection(collectionPath);
+    await removeOldFilesFromCollection(collectionPath, EVENT_EXPIRATION_DAYS);
 };
 
 exports.pollEvents = pollEvents;
