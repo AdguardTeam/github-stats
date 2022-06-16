@@ -6,7 +6,11 @@ const {
     readdir,
     ensureDir,
 } = require('fs-extra');
-const { format, endOfYesterday } = require('date-fns');
+const {
+    format,
+    endOfYesterday,
+    eachDayOfInterval,
+} = require('date-fns');
 const { Readable } = require('stream');
 const { chain } = require('stream-chain');
 const { parser } = require('stream-json/jsonl/Parser');
@@ -19,12 +23,12 @@ const {
 const { MILLISECONDS_IN_DAY } = require('../constants');
 
 /**
- * Gets array of GitHub event objects from file and by search time
+ * Gets array of GitHub event objects from file and by timePeriod
  * @param {string} path path to the file to read from
  * @param {object} timePeriod
  * @return {Promise<Array<Object>>} array with GitHub event objects
  */
-const getEventsFromCollection = async (path, timePeriod) => {
+const getEventsFromFile = async (path, timePeriod) => {
     const { until, since } = timePeriod;
     const fileEventsStream = createReadStream(path, {
         flags: 'r',
@@ -51,8 +55,43 @@ const getEventsFromCollection = async (path, timePeriod) => {
 };
 
 /**
+ * Gets array of GitHub event objects from collection and by search time
+ * @param {string} path path to collection dir
+ * @param {object} timePeriod
+ * @return {Promise<Array<Object>>} array with GitHub event objects
+ */
+const getEventsFromCollection = async (path, timePeriod) => {
+    const hasDir = await pathExists(path);
+    if (!hasDir) {
+        return [];
+    }
+
+    const wantedDates = eachDayOfInterval({
+        start: new Date(timePeriod.since),
+        end: new Date(timePeriod.until),
+    });
+    const wantedFilenames = wantedDates.map((date) => `${format(date, 'yyy-MM-dd')}.jsonl`);
+    const ownedFilenames = await readdir(path);
+    const filenamesInStock = wantedFilenames.filter((wantedFilename) => {
+        const dupeIndex = ownedFilenames.findIndex((ownedFilename) => {
+            return wantedFilename === ownedFilename;
+        });
+        return dupeIndex !== -1;
+    });
+
+    const eventsInTimePeriod = [];
+    for (let i = 0; i < filenamesInStock.length; i += 1) {
+        // eslint-disable-next-line no-await-in-loop
+        const eventsFromFile = await getEventsFromFile(`${path}/${filenamesInStock[i]}`, timePeriod);
+        eventsInTimePeriod.push(eventsFromFile);
+    }
+
+    return eventsInTimePeriod.flat();
+};
+
+/**
  * Writes events from array to path as a stream, path is created if there is none
- * @param {string} path path to a collection
+ * @param {string} path path to a file
  * @param {Array.<Object>} events array with GitHub event objects
  * @param {string} flag node flag for write stream
  */
@@ -81,7 +120,7 @@ const writeEventsToFile = async (path, events, flag) => {
 
 /**
  * Sort events by date of creation and write them to a corresponding file
- * @param {string} path path to a collection
+ * @param {string} path path to collection dir
  * @param {Array<Object>} events array with GitHub event objects
  */
 const writePollToCollection = async (path, events) => {
