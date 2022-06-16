@@ -79,14 +79,11 @@ const getEventsFromCollection = async (path, timePeriod) => {
         return dupeIndex !== -1;
     });
 
-    const eventsInTimePeriod = [];
-    for (let i = 0; i < filenamesInStock.length; i += 1) {
-        // eslint-disable-next-line no-await-in-loop
-        const eventsFromFile = await getEventsFromFile(`${path}/${filenamesInStock[i]}`, timePeriod);
-        eventsInTimePeriod.push(eventsFromFile);
-    }
+    const eventsFromPeriod = await Promise.all(filenamesInStock.map(async (filename) => {
+        return getEventsFromFile(`${path}/${filename}`, timePeriod);
+    }));
 
-    return eventsInTimePeriod.flat();
+    return eventsFromPeriod.flat();
 };
 
 /**
