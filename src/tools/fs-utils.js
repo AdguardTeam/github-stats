@@ -11,6 +11,7 @@ const {
     endOfYesterday,
     eachDayOfInterval,
 } = require('date-fns');
+const { intersection } = require('lodash/array');
 const { Readable } = require('stream');
 const { chain } = require('stream-chain');
 const { parser } = require('stream-json/jsonl/Parser');
@@ -72,13 +73,7 @@ const getEventsFromCollection = async (path, timePeriod) => {
     });
     const wantedFilenames = wantedDates.map((date) => `${format(date, 'yyy-MM-dd')}.jsonl`);
     const ownedFilenames = await readdir(path);
-    const filenamesInStock = wantedFilenames.filter((wantedFilename) => {
-        const dupeIndex = ownedFilenames.findIndex((ownedFilename) => {
-            return wantedFilename === ownedFilename;
-        });
-        return dupeIndex !== -1;
-    });
-
+    const filenamesInStock = intersection(wantedFilenames, ownedFilenames);
     const eventsFromPeriod = await Promise.all(filenamesInStock.map(async (filename) => {
         return getEventsFromFile(`${path}/${filename}`, timePeriod);
     }));
