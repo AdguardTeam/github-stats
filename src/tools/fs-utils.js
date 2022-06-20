@@ -21,7 +21,7 @@ const {
     isCreatedUntil,
     sortEventsByDate,
 } = require('./events-utils');
-const { MILLISECONDS_IN_DAY } = require('../constants');
+const { MILLISECONDS_IN_DAY, COLLECTION_FILE_EXTENSION } = require('../constants');
 
 /**
  * Gets array of GitHub event objects from file and by timePeriod
@@ -71,7 +71,7 @@ const getEventsFromCollection = async (path, timePeriod) => {
         start: new Date(timePeriod.since),
         end: new Date(timePeriod.until),
     });
-    const wantedFilenames = wantedDates.map((date) => `${format(date, 'yyy-MM-dd')}.jsonl`);
+    const wantedFilenames = wantedDates.map((date) => `${format(date, 'yyy-MM-dd')}${COLLECTION_FILE_EXTENSION}`);
     const ownedFilenames = await readdir(path);
     const filenamesInStock = intersection(wantedFilenames, ownedFilenames);
     const eventsFromPeriod = await Promise.all(filenamesInStock.map(async (filename) => {
@@ -120,7 +120,7 @@ const writePollToCollection = async (path, events) => {
     const sortedPoll = sortEventsByDate(events);
 
     await Promise.all(Object.keys(sortedPoll).map((date) => {
-        return writeEventsToFile(`${path}/${date}.jsonl`, sortedPoll[date], 'a');
+        return writeEventsToFile(`${path}/${date}${COLLECTION_FILE_EXTENSION}`, sortedPoll[date], 'a');
     }));
 };
 
@@ -168,8 +168,8 @@ const removeDupesFromCollection = async (path) => {
     const currentDate = format(new Date(), 'yyy-MM-dd');
     const previousDate = format(endOfYesterday(), 'yyy-MM-dd');
 
-    await removeDupesFromFile(`${path}/${currentDate}.jsonl`);
-    await removeDupesFromFile(`${path}/${previousDate}.jsonl`);
+    await removeDupesFromFile(`${path}/${currentDate}${COLLECTION_FILE_EXTENSION}`);
+    await removeDupesFromFile(`${path}/${previousDate}${COLLECTION_FILE_EXTENSION}`);
 };
 
 /**
@@ -182,7 +182,7 @@ const removeOldFilesFromCollection = async (path, expirationDays) => {
     const expirationTime = expirationDays * MILLISECONDS_IN_DAY;
 
     const oldFilenames = filenames.filter((filename) => {
-        const date = filename.split('.')[0];
+        const date = filename.substring(0, filename.indexOf(COLLECTION_FILE_EXTENSION));
         const daysOld = new Date(date).getTime();
         return Date.now() - daysOld > expirationTime;
     });
