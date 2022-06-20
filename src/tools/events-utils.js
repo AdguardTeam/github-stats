@@ -1,23 +1,9 @@
 const { format } = require('date-fns');
 const {
-    MILLISECONDS_IN_DAY,
     EVENT_TYPES,
     LABEL_NAMES,
     ACTION_NAMES,
 } = require('../constants');
-
-/**
- * Determines if event counts as old
- * @param {Object} event
- * @param {number} expirationDays number of days representing events lifespan
- * @return {boolean} array with GitHub event objects
- */
-const isOldEvent = (event, expirationDays) => {
-    const expirationTime = expirationDays * MILLISECONDS_IN_DAY;
-    const createdTime = new Date(event.created_at).getTime();
-
-    return Date.now() - createdTime > expirationTime;
-};
 
 /**
  * Determines if Github event is 'opened'
@@ -245,7 +231,6 @@ const getActivityAuthor = (event) => {
 };
 
 module.exports = {
-    isOldEvent,
     isOpenedAction,
     isClosedAction,
     isStale,
