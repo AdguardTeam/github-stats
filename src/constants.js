@@ -22,6 +22,8 @@ const ACTION_NAMES = {
     CLOSED: 'closed',
 };
 
+const COLLECTION_FILE_EXTENSION = '.jsonl';
+
 module.exports = {
     MILLISECONDS_IN_DAY,
     EVENT_EXPIRATION_DAYS,
@@ -29,4 +31,5 @@ module.exports = {
     EVENT_TYPES,
     LABEL_NAMES,
     ACTION_NAMES,
+    COLLECTION_FILE_EXTENSION,
 };
